@@ -7,7 +7,10 @@ import GlobalStyles from './globalStyles';
 // Páginas
 import Agendamentos from './pages/Agendamentos';
 import Atendimento from './pages/Atendimento';
-import Cadastro from './pages/Cadastro';
+import CadastroCliente from './pages/CadastroCliente';
+import CadastroEquipamento from './pages/CadastroEquipamento';
+import CadastroFuncionario from './pages/CadastroFuncionario';
+import CadastroMedicamento from './pages/CadastroMedicamento';
 import Compras from './pages/Compras';
 import Financeiro from './pages/Financeiro';
 import Main from './pages/Main';
@@ -28,7 +31,26 @@ export default function App() {
             <Route exact path="/" component={Main} />
             <Route exact path="/agendamento" component={Agendamentos} />
             <Route exact path="/atendimento" component={Atendimento} />
-            <Route exact path="/cadastro" component={Cadastro} />
+            <Route
+              exact
+              path="/cadastrar/cliente"
+              component={CadastroCliente}
+            />
+            <Route
+              exact
+              path="/cadastrar/equipamento"
+              component={CadastroEquipamento}
+            />
+            <Route
+              exact
+              path="/cadastrar/funcionario"
+              component={CadastroFuncionario}
+            />
+            <Route
+              exact
+              path="/cadastrar/medicamento"
+              component={CadastroMedicamento}
+            />
             <Route exact path="/compras" component={Compras} />
             <Route exact path="/financeiro" component={Financeiro} />
             <Route exact path="/login" component={Login} />
