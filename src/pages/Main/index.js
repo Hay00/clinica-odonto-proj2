@@ -1,11 +1,9 @@
-import { TextField } from '@material-ui/core';
 import React from 'react';
 import { Container } from './styles';
 
 export default function index() {
   return (
     <Container>
-      <TextField placeholder={'Insira o seu nome'} />
       <ul>
         <ul>
           <a href="/">Main</a>

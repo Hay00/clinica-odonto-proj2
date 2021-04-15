@@ -1,21 +1,38 @@
 import React, { useState } from 'react';
-import clsx from 'clsx';
-import { useTheme } from '@material-ui/core/styles';
-import Drawer from '@material-ui/core/Drawer';
+
+// Componentes Material-ui
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
+import { useTheme } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+
+// Ícones
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import HomeIcon from '@material-ui/icons/Home';
+import EventIcon from '@material-ui/icons/Event';
+import DescriptionIcon from '@material-ui/icons/Description';
+import GroupIcon from '@material-ui/icons/Group';
+import PersonIcon from '@material-ui/icons/Person';
+
 import MailIcon from '@material-ui/icons/Mail';
+import MenuIcon from '@material-ui/icons/Menu';
+import InboxIcon from '@material-ui/icons/MoveToInbox';
+
+// Link do router
+import { Link as RouterLink } from 'react-router-dom';
+
+import clsx from 'clsx';
 import { Container, useStyles } from './styles';
 
 export default function Header({ children }) {
@@ -79,16 +96,58 @@ export default function Header({ children }) {
         </div>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+          <ListItem button component={RouterLink} to={'/'}>
+            <ListItemIcon>
+              <HomeIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Inicio'} />
+          </ListItem>
+
+          <ListItem button component={RouterLink} to={'/agendamento'}>
+            <ListItemIcon>
+              <EventIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Agenda'} />
+          </ListItem>
+
+          <ListItem button component={RouterLink} to={'/'}>
+            <ListItemIcon>
+              <PersonIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Clientes'} />
+          </ListItem>
+
+          <ListItem button component={RouterLink} to={'/'}>
+            <ListItemIcon>
+              <AssignmentIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Consultas'} />
+          </ListItem>
+
+          <ListItem button component={RouterLink} to={'/financeiro'}>
+            <ListItemIcon>
+              <AttachMoneyIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Financeiro'} />
+          </ListItem>
+
+          <ListItem button component={RouterLink} to={'/'}>
+            <ListItemIcon>
+              <GroupIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Funcionários'} />
+          </ListItem>
+
+          <ListItem button component={RouterLink} to={'/relatorios'}>
+            <ListItemIcon>
+              <DescriptionIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Relatórios'} />
+          </ListItem>
         </List>
+
         <Divider />
+
         <List>
           {['All mail', 'Trash', 'Spam'].map((text, index) => (
             <ListItem button key={text}>
