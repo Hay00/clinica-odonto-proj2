@@ -23,7 +23,7 @@ export default function App() {
     <BrowserRouter>
       <div style={{ display: 'flex' }}>
         <Header />
-        <div style={{ marginTop: 64 }}>
+        <div style={{ marginTop: 64,width: '100%' }}>
           <Switch>
             <Route exact path="/" component={Main} />
             <Route exact path="/agendamento" component={Agendamentos} />
