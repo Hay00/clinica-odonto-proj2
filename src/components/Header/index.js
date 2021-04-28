@@ -9,84 +9,129 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import { useTheme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 // Ícones
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-
-import AssignmentIcon from '@material-ui/icons/Assignment';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import HomeIcon from '@material-ui/icons/Home';
-import EventIcon from '@material-ui/icons/Event';
 import DescriptionIcon from '@material-ui/icons/Description';
+import EventIcon from '@material-ui/icons/Event';
 import GroupIcon from '@material-ui/icons/Group';
-import PersonIcon from '@material-ui/icons/Person';
-
+import HomeIcon from '@material-ui/icons/Home';
 import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
+import PersonIcon from '@material-ui/icons/Person';
+
+import clsx from 'clsx';
 
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
-
-import clsx from 'clsx';
-import { Container, useStyles } from './styles';
+import { Container, Logo, User, useStyles } from './styles';
 
 export default function Header({ children }) {
   const classes = useStyles();
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [openMenu, setOpenMenu] = useState(null);
 
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
+  /**
+   * Associa o componente aberto
+   * @param {Event} event evento do componente
+   */
+  function handleClick(event) {
+    setOpenMenu(event.currentTarget);
+  }
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
+  /**
+   * Fecha o menu
+   */
+  function handleClose() {
+    setOpenMenu(null);
+  }
+
   return (
     <Container>
       <AppBar
         position="fixed"
         className={clsx(classes.appBar, {
-          [classes.appBarShift]: open,
+          [classes.appBarShift]: openDrawer,
         })}
       >
         <Toolbar>
           <IconButton
             color="inherit"
             aria-label="open drawer"
-            onClick={handleDrawerOpen}
+            onClick={() => setOpenDrawer(true)}
             edge="start"
             className={clsx(classes.menuButton, {
-              [classes.hide]: open,
+              [classes.hide]: openDrawer,
             })}
           >
             <MenuIcon />
           </IconButton>
+          <IconButton color="inherit">
+            <Logo size={26} />
+          </IconButton>
           <Typography variant="h6" noWrap>
-            Mini variant drawer
+            Clinica Odonto
           </Typography>
+          {true && (
+            <User>
+              <IconButton
+                aria-label="more"
+                aria-controls="long-menu"
+                aria-haspopup="true"
+                onClick={handleClick}
+              >
+                <AccountCircleIcon
+                  fontSize={'large'}
+                  style={{ color: 'white' }}
+                />
+              </IconButton>
+              <Menu
+                id="user-menu"
+                style={{ marginTop: '60px' }}
+                anchorEl={openMenu}
+                keepMounted
+                open={Boolean(openMenu)}
+                onClose={handleClose}
+              >
+                <Typography
+                  style={{ padding: '6px 16px' }}
+                  variant="subtitle1"
+                  gutterBottom
+                >
+                  email.exemplo@mail.com
+                </Typography>
+                <MenuItem onClick={() => console.log('logout')}>Sair</MenuItem>
+              </Menu>
+            </User>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer
         variant="permanent"
         className={clsx(classes.drawer, {
-          [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
+          [classes.drawerOpen]: openDrawer,
+          [classes.drawerClose]: !openDrawer,
         })}
         classes={{
           paper: clsx({
-            [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
+            [classes.drawerOpen]: openDrawer,
+            [classes.drawerClose]: !openDrawer,
           }),
         }}
       >
         <div className={classes.toolbar}>
-          <IconButton onClick={handleDrawerClose}>
+          <IconButton onClick={() => setOpenDrawer(false)}>
             {theme.direction === 'rtl' ? (
               <ChevronRightIcon />
             ) : (

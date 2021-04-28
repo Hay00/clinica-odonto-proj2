@@ -39,27 +39,27 @@ export default function App() {
               <Route exact path="/atendimento" component={Atendimento} />
               <Route
                 exact
-                path="/cadastrar/agendamento"
+                path="/agendamento/cadastro"
                 component={CadastroAgendamento}
               />
               <Route
                 exact
-                path="/cadastrar/cliente"
+                path="/cliente/cadastro"
                 component={CadastroCliente}
               />
               <Route
                 exact
-                path="/cadastrar/equipamento"
+                path="/equipamento/cadastro"
                 component={CadastroEquipamento}
               />
               <Route
                 exact
-                path="/cadastrar/funcionario"
+                path="/funcionario/cadastro"
                 component={CadastroFuncionario}
               />
               <Route
                 exact
-                path="/cadastrar/medicamento"
+                path="/medicamento/cadastro"
                 component={CadastroMedicamento}
               />
               <Route exact path="/compras" component={Compras} />

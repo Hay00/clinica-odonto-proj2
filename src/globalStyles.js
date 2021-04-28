@@ -9,13 +9,12 @@ export default createGlobalStyle`
 }
 html {
     min-height: 100%;
-    background: var(--clr-bg);
+    /* background: var(--clr-bg); */
 }
 *, button, input, a {
     border: 0;
     background: none;
     font-family: "Roboto", "Helvetica", "Arial", sans-serif;;
-    color: #000;
     transition: color .2s ease-out;
 }
 ul {
@@ -28,7 +27,8 @@ body{
 // Colocar cores aqui!
 --clr-primary: #03a9f4;
 --clr-bg: #f6f6f6;
+--clr-success: #4BB543;
+--clr-success-dark: #008410;
 --clr-error: #d32f2f;
-
 }
 `;
