@@ -12,10 +12,16 @@ export default function index() {
           <a href="/agendamento">Agendamentos</a>
         </ul>
         <ul>
-          <a href="/atendimento">Atendimento</a>
+          <a href="/cliente/cadastro">Cadastro Cliente</a>
         </ul>
         <ul>
-          <a href="/cadastro">Cadastro</a>
+          <a href="/equipamento/cadastro">Cadastro Equipamento</a>
+        </ul>
+        <ul>
+          <a href="/funcionario/cadastro">Cadastro Funcionário</a>
+        </ul>
+        <ul>
+          <a href="/medicamento/cadastro">Cadastro Medicamento</a>
         </ul>
         <ul>
           <a href="/compras">Compras</a>

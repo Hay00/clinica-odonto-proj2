@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 // Material UI
 import Divider from '@material-ui/core/Divider';
@@ -29,50 +29,97 @@ import {
   SearchField,
 } from './styles';
 
-export default function Agendamentos() {
-  const rows = [
-    {
-      id: 0,
-      cliente: '1 cliente',
-      dentista: '1 dentista',
-      data: new Date().toLocaleDateString('pt-br'),
-      hora: new Date().getHours(),
-      concluida: false,
-    },
-    {
-      id: 1,
-      cliente: '2 cliente',
-      dentista: '2 dentista',
-      data: new Date().toLocaleDateString('pt-br'),
-      hora: new Date().getHours(),
-      concluida: false,
-    },
-    {
-      id: 2,
-      cliente: '3 cliente',
-      dentista: '3 dentista',
-      data: new Date().toLocaleDateString('pt-br'),
-      hora: new Date().getHours(),
-      concluida: true,
-    },
-    {
-      id: 3,
-      cliente: '4 cliente',
-      dentista: '4 dentista',
-      data: new Date().toLocaleDateString('pt-br'),
-      hora: new Date().getHours(),
-      concluida: false,
-    },
-    {
-      id: 4,
-      cliente: '5 cliente',
-      dentista: '5 dentista',
-      data: new Date().toLocaleDateString('pt-br'),
-      hora: new Date().getHours(),
-      concluida: true,
-    },
-  ];
+// Api back-end
+import api from '../../services/api';
+import Loading from '../../components/Loading';
+import DialogBox from '../../components/DialogBox';
 
+export default function Agendamentos({ history }) {
+  const [agendamentos, setAgendamentos] = useState([]);
+  const [showDialog, setShowDialog] = useState(false);
+  const [toRemove, setToRemove] = useState(null);
+
+  /**
+   * Busca os agendamentos usando a API
+   */
+  useEffect(() => {
+    async function getAgendamentos() {
+      try {
+        const { data } = await api.get('/agendamentos');
+        setAgendamentos(data.values);
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+
+    getAgendamentos();
+  }, []);
+
+  /**
+   * Marca como concluído o agendamento
+   *
+   * @param {String} id id do agendamento
+   */
+  function handleComplete(id) {
+    console.log('change complete');
+  }
+
+  /**
+   * Abre a página para realizar alterações no agendamento
+   *
+   * @param {String} id id do agendamento
+   */
+  function handleEdit(id) {
+    history.push(`/agendamento/editar/${id}`);
+  }
+
+  /**
+   * Abre uma janela de dialogo para remover um agendamento
+   * @param {String} id id do agendamento
+   */
+  function handleRemove(id) {
+    setToRemove(id);
+    setShowDialog(true);
+  }
+
+  /**
+   * Ao confirmar um agendamento é deletado
+   */
+  async function onAcceptDialog() {
+    const result = await api.delete(`/agendamentos/${toRemove}`);
+    if (result) {
+      const rest = agendamentos.filter(({ idAgenda }) => idAgenda !== toRemove);
+      setAgendamentos(rest);
+    }
+    setToRemove(null);
+    setShowDialog(false);
+  }
+
+  /**
+   * Fecha a cáixa de diálogo
+   */
+  function closeDialog() {
+    setShowDialog(false);
+  }
+
+  /**
+   * Realiza a formatação da data em SQL para JS
+   *
+   * @param {Date} date data
+   * @param {String} hora hora
+   * @returns JSX
+   */
+  function parseDate(date, hora) {
+    date = new Date(date).toLocaleDateString('pt-br');
+    return `${date} - ${hora}`;
+  }
+
+  /**
+   * Renderiza o status do agendamento
+   *
+   * @param {Boolean} status status do agendamento
+   * @returns JSX
+   */
   function renderStatus(status) {
     return (
       <p style={{ color: status ? 'green' : 'red' }}>
@@ -106,49 +153,67 @@ export default function Agendamentos() {
           </div>
         </Heading>
         <Divider style={{ margin: '16px 0px 8px' }} />
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <b>Cliente</b>
-              </TableCell>
-              <TableCell>
-                <b>Dentista</b>
-              </TableCell>
-              <TableCell>
-                <b>Data e Hora</b>
-              </TableCell>
-              <TableCell>
-                <b>Status</b>
-              </TableCell>
-              <TableCell>
-                <b>Ações</b>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map(({ id, cliente, dentista, data, hora, concluida }) => (
-              <TableRow key={id} hover role="checkbox">
-                <TableCell>{cliente}</TableCell>
-                <TableCell>{dentista}</TableCell>
-                <TableCell>{`${data} - ${hora}h`}</TableCell>
-                <TableCell>{renderStatus(concluida)}</TableCell>
+        {agendamentos.length ? (
+          <Table>
+            <TableHead>
+              <TableRow>
                 <TableCell>
-                  <IconButton>
-                    <Complete />
-                  </IconButton>
-                  <IconButton>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton>
-                    <Remove />
-                  </IconButton>
+                  <b>Cliente</b>
+                </TableCell>
+                <TableCell>
+                  <b>Dentista</b>
+                </TableCell>
+                <TableCell>
+                  <b>Data e Hora</b>
+                </TableCell>
+                <TableCell>
+                  <b>Tipo</b>
+                </TableCell>
+                <TableCell>
+                  <b>Status</b>
+                </TableCell>
+                <TableCell>
+                  <b>Ações</b>
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHead>
+            <TableBody>
+              {agendamentos.map(
+                ({ idAgenda, idCliente, data, hora, concluida }) => (
+                  <TableRow key={idAgenda} hover role="checkbox">
+                    <TableCell>{idCliente}</TableCell>
+                    <TableCell>{'Nenhum'}</TableCell>
+                    <TableCell>{parseDate(data, hora)}</TableCell>
+                    <TableCell>{'Nenhum'}</TableCell>
+                    <TableCell>{renderStatus(concluida)}</TableCell>
+                    <TableCell>
+                      <IconButton onClick={() => handleComplete(idAgenda)}>
+                        <Complete />
+                      </IconButton>
+                      <IconButton onClick={() => handleEdit(idAgenda)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton onClick={() => handleRemove(idAgenda)}>
+                        <Remove />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                )
+              )}
+            </TableBody>
+          </Table>
+        ) : (
+          <Loading />
+        )}
       </TableContainer>
+      <DialogBox
+        type={'question'}
+        title={'Remover Agendamento?'}
+        message={'Você realmente deseja remover este agendamento'}
+        open={showDialog}
+        onAccept={onAcceptDialog}
+        closeDialog={closeDialog}
+      />
     </Container>
   );
 }
