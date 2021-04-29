@@ -1,80 +1,170 @@
- 
 import React from 'react';
-import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
+
+// Material UI
+import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import Button from '@material-ui/core/Button';
-/*
-const useStyles = makeStyles((theme) => ({
-  root: {
-    '& > *': {
-      margin: theme.spacing(1),
+import Typography from '@material-ui/core/Typography';
+
+// Icons
+import EditIcon from '@material-ui/icons/Edit';
+import SearchIcon from '@material-ui/icons/Search';
+
+// Link do router
+import { Link as RouterLink } from 'react-router-dom';
+
+import {
+  AddButton,
+  Complete,
+  Container,
+  Heading,
+  Remove,
+  SearchField,
+} from './styles';
+
+export default function Financeiro() {
+  const rows = [
+    {
+      id: 0,
+      data: new Date().toLocaleDateString('pt-br'),
+      descricao: 'Cirurgia Dentaria',
+      situacao: true,
+      valor: '505.90',
+      envolvido: 'Fulano',
+
     },
-  },
-}));
-*/
-//export default function ContainedButtons() {
+    {
+      id: 1,
+      data: new Date().toLocaleDateString('pt-br'),
+      descricao: 'Reparo Aparelho',
+      situacao: true,
+      valor: '505.90',
+      envolvido: 'Ciclano',
+    },
 
+    {
+      id: 2,
+      data: new Date().toLocaleDateString('pt-br'),
+      descricao: 'Reparo Aparelho',
+      situacao: true,
+      valor: '505.90',
+      envolvido: 'Beltrano',
+    },
+    {
+      id: 3,
+      data: new Date().toLocaleDateString('pt-br'),
+      descricao: 'Reparo Aparelho',
+      situacao: false,
+      valor: -505.90,
+      envolvido: 'Antonio',
+    },
+    {
+      id: 4,
+      data: new Date().toLocaleDateString('pt-br'),
+      descricao: 'Reparo Aparelho',
+      situacao: true,
+      valor: 505.90,
+      envolvido: 'Roberto',
+    },
+  ];
 
-//import Title from './Title';
+  function renderSituacao(situacao) {
+    return (
+      <p style={{ color: situacao ? 'green' : 'red' }}>
+        {situacao ? 'Pago' : 'Não Pago'}
+      </p>
+    );
+  }
 
-// Generate Order Data
-function createData(id, date, name, shipTo, paymentMethod, amount) {
-  return { id, date, name, shipTo, paymentMethod, amount };
-}
+  function renderValor(valor) {
+    return (
+      <p style={{ color: valor > 0 ? 'green' : 'red' }}>
+        {valor}
+      </p>
+    );
+  }
 
-const rows = [
-  createData(0, '16 Mar, 2019', 'Elvis Presley', 'Tupelo, MS', 'VISA ⠀•••• 3719', 312.44),
-  createData(1, '16 Mar, 2019', 'Paul McCartney', 'London, UK', 'VISA ⠀•••• 2574', 866.99),
-  createData(2, '16 Mar, 2019', 'Tom Scholz', 'Boston, MA', 'MC ⠀•••• 1253', 100.81),
-  createData(3, '16 Mar, 2019', 'Michael Jackson', 'Gary, IN', 'AMEX ⠀•••• 2000', 654.39),
-  createData(4, '15 Mar, 2019', 'Bruce Springsteen', 'Long Branch, NJ', 'VISA ⠀•••• 5919', 212.79),
-];
-
-function preventDefault(event) {
-  event.preventDefault();
-}
-
-const useStyles = makeStyles((theme) => ({
-  seeMore: {
-    marginTop: theme.spacing(3),
-  },
-}));
-
-export default function Orders() {
-  const classes = useStyles();
   return (
-    <React.Fragment>
-      <h1>Recent Orders</h1>
-      <Table size="medium">
-        <TableHead>
-          <TableRow>
-            <TableCell>ID</TableCell>
-            <TableCell>Data</TableCell>
-            <TableCell>Descrição</TableCell>
-            <TableCell>Situação</TableCell>
-            <TableCell align="right">Valor</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow key={row.id}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.name}</TableCell>
-              <TableCell>{row.shipTo}</TableCell>
-              <TableCell>{row.paymentMethod}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
+    <Container>
+      <TableContainer component={Paper} style={{ padding: '1em' }}>
+        <Typography style={{ margin: 8 }} color="primary" variant="h6">
+          Financeiro
+        </Typography>
+        <Heading>
+          <div>
+            <SearchField
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <SearchIcon />
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </div>
+          <div>
+            <AddButton component={RouterLink} to={'/Financeiro/cadastro'}>
+              Novo lançamento
+            </AddButton>
+          </div>
+        </Heading>
+        <Divider style={{ margin: '16px 0px 8px' }} />
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <b>ID da Transação</b>
+              </TableCell>
+              <TableCell>
+                <b>Data</b>
+              </TableCell>
+              <TableCell>
+                <b>Descrição</b>
+              </TableCell>
+              <TableCell>
+                <b>Situação</b>
+              </TableCell>
+              <TableCell>
+                <b>valor</b>
+              </TableCell>
+              <TableCell>
+                <b>Cliente/Fornecedor</b>
+              </TableCell>
+              <TableCell>
+                <b>Ações</b>
+              </TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <div className={classes.seeMore}>
-      <Button variant="Novo Recebimento">Default</Button>
-      </div>
-    </React.Fragment>
+          </TableHead>
+          <TableBody>
+
+            {rows.map(({ id, data, descricao, situacao, valor, envolvido }) => (
+              <TableRow key={id} hover role="checkbox">
+                <TableCell>{id}</TableCell>
+                <TableCell>{data}</TableCell>
+                <TableCell>{descricao}</TableCell>
+                <TableCell>{renderSituacao(situacao)}</TableCell>
+                <TableCell>{renderValor(valor)}</TableCell>
+                <TableCell>{envolvido}</TableCell>
+                <TableCell>
+                  <IconButton>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton>
+                    <Remove />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Container>
   );
 }
