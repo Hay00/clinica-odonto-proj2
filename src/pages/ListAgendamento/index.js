@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 // Material UI
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -15,7 +14,6 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import EditIcon from '@material-ui/icons/Edit';
-import SearchIcon from '@material-ui/icons/Search';
 
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
@@ -25,14 +23,15 @@ import {
   Complete,
   Container,
   Heading,
+  Message,
   Remove,
-  SearchField,
 } from './styles';
 
 // Api back-end
 import api from '../../services/api';
 import Loading from '../../components/Loading';
 import DialogBox from '../../components/DialogBox';
+import Search from '../../components/Search';
 
 export default function Agendamentos({ history }) {
   const [agendamentos, setAgendamentos] = useState([]);
@@ -46,7 +45,11 @@ export default function Agendamentos({ history }) {
     async function getAgendamentos() {
       try {
         const { data } = await api.get('/agendamentos');
-        setAgendamentos(data.values);
+        if (data.values.length) {
+          setAgendamentos(data.values);
+        } else {
+          setAgendamentos(null);
+        }
       } catch (error) {
         console.log(error.message);
       }
@@ -60,8 +63,21 @@ export default function Agendamentos({ history }) {
    *
    * @param {String} id id do agendamento
    */
-  function handleComplete(id) {
-    console.log('change complete');
+  async function handleComplete(id, status) {
+    try {
+      const result = await api.put(`/agendamentos/completo/${id}`, {
+        concluida: !status,
+      });
+      if (result) {
+        const values = agendamentos.map((obj) => {
+          obj.status = obj.idAgenda === id ? !status : obj.status;
+          return obj;
+        });
+        setAgendamentos(values);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
   }
 
   /**
@@ -103,6 +119,43 @@ export default function Agendamentos({ history }) {
   }
 
   /**
+   * Busca um agendamento a partir do cliente
+   *
+   * @param {String} texto string a ser buscada
+   */
+  async function onSearch(texto) {
+    try {
+      const json = {
+        params: { text: texto.toLowerCase() },
+      };
+      const { data } = await api.get('/agendamentos/buscar/', json);
+      if (data.values.length) {
+        setAgendamentos(data.values);
+      } else {
+        setAgendamentos(null);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  /**
+   * Limpa a busca
+   */
+  async function clearSearch() {
+    try {
+      const { data } = await api.get('/agendamentos');
+      if (data.values.length) {
+        setAgendamentos(data.values);
+      } else {
+        setAgendamentos(null);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  }
+
+  /**
    * Realiza a formatação da data em SQL para JS
    *
    * @param {Date} date data
@@ -128,6 +181,72 @@ export default function Agendamentos({ history }) {
     );
   }
 
+  /**
+   * Renderiza a tabela de acordo com os dados
+   *
+   * @returns SJX
+   */
+  function renderTable() {
+    const center = { display: 'flex', justifyContent: 'center' };
+
+    if (agendamentos === null) {
+      return <Message>Nenhum agendamento encontrado!</Message>;
+    }
+    if (agendamentos.length) {
+      return (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>
+                <b>Cliente</b>
+              </TableCell>
+              <TableCell>
+                <b>Dentista</b>
+              </TableCell>
+              <TableCell>
+                <b>Data e Hora</b>
+              </TableCell>
+              <TableCell>
+                <b>Tipo</b>
+              </TableCell>
+              <TableCell>
+                <b>Status</b>
+              </TableCell>
+              <TableCell>
+                <b style={center}>Ações</b>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {agendamentos.map((obj) => (
+              <TableRow key={obj.idAgenda} hover role="checkbox">
+                <TableCell>{obj.cliente}</TableCell>
+                <TableCell>{obj.dentista}</TableCell>
+                <TableCell>{parseDate(obj.data, obj.hora)}</TableCell>
+                <TableCell>{obj.tipo}</TableCell>
+                <TableCell>{renderStatus(obj.status)}</TableCell>
+                <TableCell style={center}>
+                  <IconButton
+                    onClick={() => handleComplete(obj.idAgenda, obj.status)}
+                  >
+                    <Complete />
+                  </IconButton>
+                  <IconButton onClick={() => handleEdit(obj.idAgenda)}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton onClick={() => handleRemove(obj.idAgenda)}>
+                    <Remove />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      );
+    }
+    return <Loading />;
+  }
+
   return (
     <Container>
       <TableContainer component={Paper} style={{ padding: '1em' }}>
@@ -136,16 +255,13 @@ export default function Agendamentos({ history }) {
         </Typography>
         <Heading>
           <div>
-            <SearchField
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <SearchIcon />
-                  </InputAdornment>
-                ),
-              }}
+            <Search
+              placeholder={'Buscar por Cliente'}
+              onSearch={onSearch}
+              clearSearch={clearSearch}
             />
           </div>
+          <Divider style={{ margin: '16px 0px 8px' }} />
           <div>
             <AddButton component={RouterLink} to={'/agendamento/cadastro'}>
               Novo Agendamento
@@ -153,58 +269,7 @@ export default function Agendamentos({ history }) {
           </div>
         </Heading>
         <Divider style={{ margin: '16px 0px 8px' }} />
-        {agendamentos.length ? (
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>
-                  <b>Cliente</b>
-                </TableCell>
-                <TableCell>
-                  <b>Dentista</b>
-                </TableCell>
-                <TableCell>
-                  <b>Data e Hora</b>
-                </TableCell>
-                <TableCell>
-                  <b>Tipo</b>
-                </TableCell>
-                <TableCell>
-                  <b>Status</b>
-                </TableCell>
-                <TableCell>
-                  <b>Ações</b>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {agendamentos.map(
-                ({ idAgenda, idCliente, data, hora, concluida }) => (
-                  <TableRow key={idAgenda} hover role="checkbox">
-                    <TableCell>{idCliente}</TableCell>
-                    <TableCell>{'Nenhum'}</TableCell>
-                    <TableCell>{parseDate(data, hora)}</TableCell>
-                    <TableCell>{'Nenhum'}</TableCell>
-                    <TableCell>{renderStatus(concluida)}</TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleComplete(idAgenda)}>
-                        <Complete />
-                      </IconButton>
-                      <IconButton onClick={() => handleEdit(idAgenda)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleRemove(idAgenda)}>
-                        <Remove />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                )
-              )}
-            </TableBody>
-          </Table>
-        ) : (
-          <Loading />
-        )}
+        {renderTable()}
       </TableContainer>
       <DialogBox
         type={'question'}

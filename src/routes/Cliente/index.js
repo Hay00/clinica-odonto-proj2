@@ -6,7 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 // Páginas
 import CadastroCliente from '../../pages/CadastroCliente';
 
-export default function Cliente({ match }) {
+export default function ClienteRoute({ match }) {
   const { path } = match;
   return (
     <Switch>

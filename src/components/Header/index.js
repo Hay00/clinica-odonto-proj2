@@ -15,7 +15,6 @@ import { useTheme } from '@material-ui/core/styles';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
-import AssignmentIcon from '@material-ui/icons/Assignment';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 // Ícones
@@ -23,14 +22,15 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DescriptionIcon from '@material-ui/icons/Description';
 import EventIcon from '@material-ui/icons/Event';
+import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import GroupIcon from '@material-ui/icons/Group';
 import HomeIcon from '@material-ui/icons/Home';
-import MailIcon from '@material-ui/icons/Mail';
 import MenuIcon from '@material-ui/icons/Menu';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
 import PersonIcon from '@material-ui/icons/Person';
 
 import clsx from 'clsx';
+
+import { GiMedicines } from 'react-icons/gi';
 
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
@@ -162,18 +162,22 @@ export default function Header({ children }) {
             <ListItemText primary={'Clientes'} />
           </ListItem>
 
-          <ListItem button component={RouterLink} to={'/'}>
-            <ListItemIcon>
-              <AssignmentIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Consultas'} />
-          </ListItem>
-
           <ListItem button component={RouterLink} to={'/financeiro'}>
             <ListItemIcon>
               <AttachMoneyIcon />
             </ListItemIcon>
             <ListItemText primary={'Financeiro'} />
+          </ListItem>
+        </List>
+
+        <Divider />
+
+        <List>
+          <ListItem button component={RouterLink} to={'/equipamento'}>
+            <ListItemIcon>
+              <FormatListBulletedIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Equipamentos'} />
           </ListItem>
 
           <ListItem button component={RouterLink} to={'/'}>
@@ -183,25 +187,19 @@ export default function Header({ children }) {
             <ListItemText primary={'Funcionários'} />
           </ListItem>
 
+          <ListItem button component={RouterLink} to={'/medicamento'}>
+            <ListItemIcon>
+              <GiMedicines size={22} />
+            </ListItemIcon>
+            <ListItemText primary={'Medicamentos'} />
+          </ListItem>
+
           <ListItem button component={RouterLink} to={'/relatorios'}>
             <ListItemIcon>
               <DescriptionIcon />
             </ListItemIcon>
             <ListItemText primary={'Relatórios'} />
           </ListItem>
-        </List>
-
-        <Divider />
-
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
         </List>
       </Drawer>
     </Container>

@@ -4,16 +4,16 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 // Páginas
-import Agendamentos from '../../pages/Agendamentos';
-import CadastroAgendamento from '../../pages/CadastroAgendamento';
+import Agendamento from '../../pages/Agendamento';
+import ListAgendamento from '../../pages/ListAgendamento';
 
-export default function Agendamento({ match }) {
+export default function AgendamentoRoute({ match }) {
   const { path } = match;
   return (
     <Switch>
-      <Route exact path={path} component={Agendamentos} />
-      <Route path={`${path}/cadastro`} component={CadastroAgendamento} />
-      <Route path={`${path}/editar/:id`} component={CadastroAgendamento} />
+      <Route exact path={path} component={ListAgendamento} />
+      <Route path={`${path}/cadastro`} component={Agendamento} />
+      <Route path={`${path}/editar/:id`} component={Agendamento} />
     </Switch>
   );
 }

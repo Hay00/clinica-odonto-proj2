@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getToken } from './auth';
 
 const token =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjA0My4xOTEuMjQwLTgxIiwiaWF0IjoxNjE5NjUwNzI2LCJleHAiOjE2MTk3MzcxMjZ9.Ia_IinB3Vi_u7dr3zGf6AtaoYJs7Z_ef9P4kfwAkTiE';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAwMC4xMTEuMjIyLTAwIiwiaWF0IjoxNjE5OTI4OTQzLCJleHAiOjE2MjA1MzM3NDN9.ieW0lkn0OKmE_GBG14L_5FQv65NBN1o9GpAVq_Ot9YQ';
 
 const api = axios.create({
   baseURL: 'http://localhost:4000',

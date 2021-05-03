@@ -6,7 +6,7 @@ import { Route, Switch } from 'react-router-dom';
 // Páginas
 import CadastroFuncionario from '../../pages/CadastroFuncionario';
 
-export default function Funcionario({ match }) {
+export default function FuncionarioRoute({ match }) {
   const { path } = match;
   return (
     <Switch>
