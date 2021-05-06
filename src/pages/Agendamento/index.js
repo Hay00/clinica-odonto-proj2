@@ -53,32 +53,36 @@ export default function CadastroAgendamento({ history, location }) {
    */
   useEffect(() => {
     async function getData() {
-      // Busca clientes
-      const apiClientes = await api.get('/clientes');
-      setClientes(apiClientes.data.values);
+      try {
+        // Busca clientes
+        const apiClientes = await api.get('/clientes');
+        setClientes(apiClientes.data.values);
 
-      // Busca dentistas
-      const apiDentistas = await api.get('/funcionarios/dentistas');
-      setDentistas(apiDentistas.data.values);
-      setSelectDentista(apiDentistas.data.values[0].idFuncionario);
+        // Busca dentistas
+        const apiDentistas = await api.get('/funcionarios/dentistas');
+        setDentistas(apiDentistas.data.values);
+        setSelectDentista(apiDentistas.data.values[0].idFuncionario);
 
-      // Busca tipos de agendamento
-      const apiTipos = await api.get('/agendamentos/tipos');
-      setTipos(apiTipos.data.types);
-      setSelectType(apiTipos.data.types[0].idTipo);
+        // Busca tipos de agendamento
+        const apiTipos = await api.get('/agendamentos/tipos');
+        setTipos(apiTipos.data.types);
+        setSelectType(apiTipos.data.types[0].idTipo);
 
-      // Se for edição de agendamento
-      if (isEdit) {
-        const { data } = await api.get(`/agendamentos/${id}`);
-        setSelectCliente(data.values.idCliente);
-        setSelectDentista(data.values.idFuncionario);
-        setSelectType(data.values.idTipo);
-        setDate(new Date(data.values.data));
-        const [hora, minuto] = data.values.hora.split(':');
-        const clienteHora = new Date().setHours(hora, minuto);
-        setHour(new Date(clienteHora));
+        // Se for edição de agendamento
+        if (isEdit) {
+          const { data } = await api.get(`/agendamentos/${id}`);
+          setSelectCliente(data.values.idCliente);
+          setSelectDentista(data.values.idFuncionario);
+          setSelectType(data.values.idTipo);
+          setDate(new Date(data.values.data));
+          const [hora, minuto] = data.values.hora.split(':');
+          const clienteHora = new Date().setHours(hora, minuto);
+          setHour(new Date(clienteHora));
+        }
+        setLoading(false);
+      } catch (error) {
+        console.log(error.message);
       }
-      setLoading(false);
     }
 
     getData();

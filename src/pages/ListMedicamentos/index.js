@@ -18,13 +18,7 @@ import EditIcon from '@material-ui/icons/Edit';
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
-import {
-  AddButton,
-  Container,
-  Heading,
-  Message,
-  Remove,
-} from './styles';
+import { AddButton, Container, Heading, Message, Remove } from './styles';
 import Loading from '../../components/Loading';
 import Search from '../../components/Search';
 import DialogBox from '../../components/DialogBox';
@@ -77,15 +71,19 @@ export default function ListMedicamentos({ history }) {
    * Ao confirmar um medicamento é deletado
    */
   async function onAcceptDialog() {
-    const result = await api.delete(`/medicamentos/${toRemove}`);
-    if (result) {
-      const rest = medicamentos.filter(
-        ({ idMedicamento }) => idMedicamento !== toRemove
-      );
-      setMedicamentos(rest);
+    try {
+      const result = await api.delete(`/medicamentos/${toRemove}`);
+      if (result) {
+        const rest = medicamentos.filter(
+          ({ idMedicamento }) => idMedicamento !== toRemove
+        );
+        setMedicamentos(rest.length ? rest : null);
+      }
+      setToRemove(null);
+      setShowDialog(false);
+    } catch (error) {
+      console.log(error.message);
     }
-    setToRemove(null);
-    setShowDialog(false);
   }
 
   /**

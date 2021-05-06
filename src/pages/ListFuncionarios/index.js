@@ -18,80 +18,53 @@ import EditIcon from '@material-ui/icons/Edit';
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
-import {
-  AddButton,
-  Complete,
-  Container,
-  Heading,
-  Message,
-  Remove,
-} from './styles';
-
-// Api back-end
-import api from '../../services/api';
-import Loading from '../../components/Loading';
+// Componentes
 import DialogBox from '../../components/DialogBox';
+import Loading from '../../components/Loading';
 import Search from '../../components/Search';
 
-export default function ListAgendamentos({ history }) {
-  const [agendamentos, setAgendamentos] = useState([]);
+// Api
+import api from '../../services/api';
+
+import { AddButton, Container, Heading, Message, Remove } from './styles';
+
+export default function ListFuncionarios({ history }) {
+  const [funcionarios, setFuncionarios] = useState([]);
   const [showDialog, setShowDialog] = useState(false);
   const [toRemove, setToRemove] = useState(null);
 
   /**
-   * Busca os agendamentos usando a API
+   * Busca os funcionários usando a API
    */
   useEffect(() => {
-    async function getAgendamentos() {
+    async function getEquipamentos() {
       try {
-        const { data } = await api.get('/agendamentos');
+        const { data } = await api.get('/funcionarios');
         if (data.values.length) {
-          setAgendamentos(data.values);
+          setFuncionarios(data.values);
         } else {
-          setAgendamentos(null);
+          setFuncionarios(null);
         }
       } catch (error) {
         console.log(error.message);
       }
     }
 
-    getAgendamentos();
+    getEquipamentos();
   }, []);
 
   /**
-   * Marca como concluído o agendamento
+   * Abre a página para realizar alterações no funcionário
    *
-   * @param {String} id id do agendamento
-   */
-  async function handleComplete(id, status) {
-    try {
-      const result = await api.put(`/agendamentos/completo/${id}`, {
-        concluida: !status,
-      });
-      if (result) {
-        const values = agendamentos.map((obj) => {
-          obj.status = obj.idAgenda === id ? !status : obj.status;
-          return obj;
-        });
-        setAgendamentos(values);
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
-  }
-
-  /**
-   * Abre a página para realizar alterações no agendamento
-   *
-   * @param {String} id id do agendamento
+   * @param {String} id id do funcionário
    */
   function handleEdit(id) {
-    history.push(`/agendamento/editar/${id}`);
+    history.push(`/funcionário/editar/${id}`);
   }
 
   /**
-   * Abre uma janela de dialogo para remover um agendamento
-   * @param {String} id id do agendamento
+   * Abre uma janela de dialogo para remover um funcionário
+   * @param {String} id id do funcionário
    */
   function handleRemove(id) {
     setToRemove(id);
@@ -99,16 +72,16 @@ export default function ListAgendamentos({ history }) {
   }
 
   /**
-   * Ao confirmar um agendamento é deletado
+   * Ao confirmar um funcionário é deletado
    */
   async function onAcceptDialog() {
     try {
-      const result = await api.delete(`/agendamentos/${toRemove}`);
+      const result = await api.delete(`/funcionarios/${toRemove}`);
       if (result) {
-        const rest = agendamentos.filter(
-          ({ idAgenda }) => idAgenda !== toRemove
+        const rest = funcionarios.filter(
+          ({ idFuncionario }) => idFuncionario !== toRemove
         );
-        setAgendamentos(rest.length ? rest : null);
+        setFuncionarios(rest.length ? rest : null);
       }
       setToRemove(null);
       setShowDialog(false);
@@ -125,7 +98,7 @@ export default function ListAgendamentos({ history }) {
   }
 
   /**
-   * Busca um agendamento a partir do cliente
+   * Busca um funcionário a partir do cliente
    *
    * @param {String} texto string a ser buscada
    */
@@ -134,11 +107,11 @@ export default function ListAgendamentos({ history }) {
       const json = {
         params: { text: texto.toLowerCase() },
       };
-      const { data } = await api.get('/agendamentos/buscar/', json);
+      const { data } = await api.get('/funcionarios/buscar/', json);
       if (data.values.length) {
-        setAgendamentos(data.values);
+        setFuncionarios(data.values);
       } else {
-        setAgendamentos(null);
+        setFuncionarios(null);
       }
     } catch (error) {
       console.log(error.message);
@@ -150,11 +123,11 @@ export default function ListAgendamentos({ history }) {
    */
   async function clearSearch() {
     try {
-      const { data } = await api.get('/agendamentos');
+      const { data } = await api.get('/funcionarios');
       if (data.values.length) {
-        setAgendamentos(data.values);
+        setFuncionarios(data.values);
       } else {
-        setAgendamentos(null);
+        setFuncionarios(null);
       }
     } catch (error) {
       console.log(error.message);
@@ -168,23 +141,8 @@ export default function ListAgendamentos({ history }) {
    * @param {String} hora hora
    * @returns JSX
    */
-  function parseDate(date, hora) {
-    date = new Date(date).toLocaleDateString('pt-br');
-    return `${date} - ${hora}`;
-  }
-
-  /**
-   * Renderiza o status do agendamento
-   *
-   * @param {Boolean} status status do agendamento
-   * @returns JSX
-   */
-  function renderStatus(status) {
-    return (
-      <p style={{ color: status ? 'green' : 'red' }}>
-        {status ? 'Concluída' : 'Pendente'}
-      </p>
-    );
+  function parseDate(date) {
+    return new Date(date).toLocaleDateString('pt-br');
   }
 
   /**
@@ -195,28 +153,25 @@ export default function ListAgendamentos({ history }) {
   function renderTable() {
     const center = { display: 'flex', justifyContent: 'center' };
 
-    if (agendamentos === null) {
-      return <Message>Nenhum agendamento encontrado!</Message>;
+    if (funcionarios === null) {
+      return <Message>Nenhum cliente encontrado!</Message>;
     }
-    if (agendamentos.length) {
+    if (funcionarios.length) {
       return (
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>
-                <b>Cliente</b>
+                <b>Nome</b>
               </TableCell>
               <TableCell>
-                <b>Dentista</b>
+                <b>CPF</b>
               </TableCell>
               <TableCell>
-                <b>Data e Hora</b>
+                <b>Data Nascimento</b>
               </TableCell>
               <TableCell>
-                <b>Tipo</b>
-              </TableCell>
-              <TableCell>
-                <b>Status</b>
+                <b>Sexo</b>
               </TableCell>
               <TableCell>
                 <b style={center}>Ações</b>
@@ -224,23 +179,17 @@ export default function ListAgendamentos({ history }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {agendamentos.map((obj) => (
-              <TableRow key={obj.idAgenda} hover role="checkbox">
-                <TableCell>{obj.cliente}</TableCell>
-                <TableCell>{obj.dentista}</TableCell>
-                <TableCell>{parseDate(obj.data, obj.hora)}</TableCell>
-                <TableCell>{obj.tipo}</TableCell>
-                <TableCell>{renderStatus(obj.status)}</TableCell>
+            {funcionarios.map((obj) => (
+              <TableRow key={obj.idFuncionario} hover role="checkbox">
+                <TableCell>{obj.nome}</TableCell>
+                <TableCell>{obj.cpf}</TableCell>
+                <TableCell>{parseDate(obj.dataNascimento)}</TableCell>
+                <TableCell>{obj.sexo}</TableCell>
                 <TableCell style={center}>
-                  <IconButton
-                    onClick={() => handleComplete(obj.idAgenda, obj.status)}
-                  >
-                    <Complete />
-                  </IconButton>
-                  <IconButton onClick={() => handleEdit(obj.idAgenda)}>
+                  <IconButton onClick={() => handleEdit(obj.idFuncionario)}>
                     <EditIcon />
                   </IconButton>
-                  <IconButton onClick={() => handleRemove(obj.idAgenda)}>
+                  <IconButton onClick={() => handleRemove(obj.idFuncionario)}>
                     <Remove />
                   </IconButton>
                 </TableCell>
@@ -252,25 +201,24 @@ export default function ListAgendamentos({ history }) {
     }
     return <Loading />;
   }
-
   return (
     <Container>
       <TableContainer component={Paper} style={{ padding: '1em' }}>
         <Typography style={{ margin: 8 }} color="primary" variant="h6">
-          Agendamentos
+          Funcionários
         </Typography>
         <Heading>
           <div>
             <Search
-              placeholder={'Buscar por Cliente'}
+              placeholder={'Buscar funcionário por nome'}
               onSearch={onSearch}
               clearSearch={clearSearch}
             />
           </div>
           <Divider style={{ margin: '16px 0px 8px' }} />
           <div>
-            <AddButton component={RouterLink} to={'/agendamento/cadastro'}>
-              Novo Agendamento
+            <AddButton component={RouterLink} to={'/funcionário/cadastro'}>
+              Novo Funcionário
             </AddButton>
           </div>
         </Heading>
@@ -279,8 +227,8 @@ export default function ListAgendamentos({ history }) {
       </TableContainer>
       <DialogBox
         type={'question'}
-        title={'Remover Agendamento?'}
-        message={'Você realmente deseja remover este agendamento'}
+        title={'Remover Funcionário?'}
+        message={'Você realmente deseja remover este funcionário'}
         open={showDialog}
         onAccept={onAcceptDialog}
         closeDialog={closeDialog}

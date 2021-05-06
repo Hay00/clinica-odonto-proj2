@@ -20,16 +20,9 @@ import SearchIcon from '@material-ui/icons/Search';
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
-import {
-  AddButton,
-  Complete,
-  Container,
-  Heading,
-  Remove,
-  SearchField,
-} from './styles';
+import { AddButton, Container, Heading, Remove, SearchField } from './styles';
 
-export default function Financeiro() {
+export default function ListFinanceiro() {
   const rows = [
     {
       id: 0,
@@ -38,7 +31,6 @@ export default function Financeiro() {
       situacao: true,
       valor: '505.90',
       envolvido: 'Fulano',
-
     },
     {
       id: 1,
@@ -62,7 +54,7 @@ export default function Financeiro() {
       data: new Date().toLocaleDateString('pt-br'),
       descricao: 'Reparo Aparelho',
       situacao: false,
-      valor: -505.90,
+      valor: -505.9,
       envolvido: 'Antonio',
     },
     {
@@ -70,7 +62,7 @@ export default function Financeiro() {
       data: new Date().toLocaleDateString('pt-br'),
       descricao: 'Reparo Aparelho',
       situacao: true,
-      valor: 505.90,
+      valor: 505.9,
       envolvido: 'Roberto',
     },
   ];
@@ -84,11 +76,7 @@ export default function Financeiro() {
   }
 
   function renderValor(valor) {
-    return (
-      <p style={{ color: valor > 0 ? 'green' : 'red' }}>
-        {valor}
-      </p>
-    );
+    return <p style={{ color: valor > 0 ? 'green' : 'red' }}>{valor}</p>;
   }
 
   return (
@@ -143,7 +131,6 @@ export default function Financeiro() {
             </TableRow>
           </TableHead>
           <TableBody>
-
             {rows.map(({ id, data, descricao, situacao, valor, envolvido }) => (
               <TableRow key={id} hover role="checkbox">
                 <TableCell>{id}</TableCell>

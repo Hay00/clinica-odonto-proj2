@@ -4,13 +4,14 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 // Páginas
-import CadastroCliente from '../../pages/CadastroCliente';
+import CadastroCliente from '../../pages/Cliente';
+import ListClientes from '../../pages/ListClientes';
 
 export default function ClienteRoute({ match }) {
   const { path } = match;
   return (
     <Switch>
-      {/* <Route exact path={path} component={ListClientes} /> */}
+      <Route exact path={path} component={ListClientes} />
       <Route exact path={`${path}/cadastro`} component={CadastroCliente} />
       <Route path={`${path}/editar/:id`} component={CadastroCliente} />
     </Switch>

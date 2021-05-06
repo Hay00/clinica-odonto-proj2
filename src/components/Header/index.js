@@ -18,11 +18,11 @@ import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 
 // Ícones
+import BuildIcon from '@material-ui/icons/Build';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import DescriptionIcon from '@material-ui/icons/Description';
 import EventIcon from '@material-ui/icons/Event';
-import FormatListBulletedIcon from '@material-ui/icons/FormatListBulleted';
 import GroupIcon from '@material-ui/icons/Group';
 import HomeIcon from '@material-ui/icons/Home';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -155,7 +155,7 @@ export default function Header({ children }) {
             <ListItemText primary={'Agenda'} />
           </ListItem>
 
-          <ListItem button component={RouterLink} to={'/'}>
+          <ListItem button component={RouterLink} to={'/cliente'}>
             <ListItemIcon>
               <PersonIcon />
             </ListItemIcon>
@@ -175,12 +175,12 @@ export default function Header({ children }) {
         <List>
           <ListItem button component={RouterLink} to={'/equipamento'}>
             <ListItemIcon>
-              <FormatListBulletedIcon />
+              <BuildIcon />
             </ListItemIcon>
             <ListItemText primary={'Equipamentos'} />
           </ListItem>
 
-          <ListItem button component={RouterLink} to={'/'}>
+          <ListItem button component={RouterLink} to={'/funcionario'}>
             <ListItemIcon>
               <GroupIcon />
             </ListItemIcon>

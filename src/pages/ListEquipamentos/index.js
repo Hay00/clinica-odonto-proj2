@@ -75,15 +75,19 @@ export default function ListEquipamentos({ history }) {
    * Ao confirmar um equipamento é deletado
    */
   async function onAcceptDialog() {
-    const result = await api.delete(`/equipamentos/${toRemove}`);
-    if (result) {
-      const rest = equipamentos.filter(
-        ({ idEquipamento }) => idEquipamento !== toRemove
-      );
-      setEquipamentos(rest);
+    try {
+      const result = await api.delete(`/equipamentos/${toRemove}`);
+      if (result) {
+        const rest = equipamentos.filter(
+          ({ idEquipamento }) => idEquipamento !== toRemove
+        );
+        setEquipamentos(rest.length ? rest : null);
+      }
+      setToRemove(null);
+      setShowDialog(false);
+    } catch (error) {
+      console.log(error.message);
     }
-    setToRemove(null);
-    setShowDialog(false);
   }
 
   /**
