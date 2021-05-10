@@ -1,20 +1,16 @@
 import React from 'react';
 
-import Button from '@material-ui/core/Button';
+import PropTypes from 'prop-types';
+
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import CustomButton from '../CustomButton';
 
-export default function DialogBox({
-  type,
-  title,
-  message,
-  open,
-  closeDialog,
-  onAccept,
-}) {
+function DialogBox(props) {
+  const { type, title, message, open, closeDialog, onAccept } = props;
   return (
     <Dialog
       open={open}
@@ -31,20 +27,31 @@ export default function DialogBox({
       <DialogActions>
         {type === 'question' && (
           <>
-            <Button onClick={closeDialog} color="secondary">
+            <CustomButton onClick={closeDialog} color="error">
               Não
-            </Button>
-            <Button onClick={onAccept} color="secondary" autoFocus>
+            </CustomButton>
+            <CustomButton onClick={onAccept} color="secondary" autoFocus>
               Sim
-            </Button>
+            </CustomButton>
           </>
         )}
         {type === 'message' && (
-          <Button onClick={closeDialog} color="secondary" autoFocus>
+          <CustomButton onClick={closeDialog} color="secondary" autoFocus>
             Ok
-          </Button>
+          </CustomButton>
         )}
       </DialogActions>
     </Dialog>
   );
 }
+
+DialogBox.propTypes = {
+  type: PropTypes.oneOf(['message', 'question']).isRequired,
+  title: PropTypes.string.isRequired,
+  message: PropTypes.string,
+  open: PropTypes.bool.isRequired,
+  closeDialog: PropTypes.func.isRequired,
+  onAccept: PropTypes.func.isRequired,
+};
+
+export default DialogBox;

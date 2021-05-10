@@ -57,6 +57,7 @@ export default function CadastroAgendamento({ history, location }) {
         // Busca clientes
         const apiClientes = await api.get('/clientes');
         setClientes(apiClientes.data.values);
+        setSelectCliente(apiClientes.data.values[0].idCliente);
 
         // Busca dentistas
         const apiDentistas = await api.get('/funcionarios/dentistas');

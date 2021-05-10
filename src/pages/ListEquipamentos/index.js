@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 // Material UI
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -14,11 +14,13 @@ import Typography from '@material-ui/core/Typography';
 
 // Icons
 import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
 // Componentes
+import CustomButton from '../../components/CustomButton';
 import DialogBox from '../../components/DialogBox';
 import Loading from '../../components/Loading';
 import Search from '../../components/Search';
@@ -26,7 +28,7 @@ import Search from '../../components/Search';
 // Api
 import api from '../../services/api';
 
-import { AddButton, Container, Heading, Message, Remove } from './styles';
+import { AddButton, Container, Heading, Message } from './styles';
 
 export default function ListEquipamentos({ history }) {
   const [equipamentos, setEquipamentos] = useState([]);
@@ -37,20 +39,16 @@ export default function ListEquipamentos({ history }) {
    * Busca os equipamentos usando a API
    */
   useEffect(() => {
-    async function getEquipamentos() {
-      try {
-        const { data } = await api.get('/equipamentos');
+    api
+      .get('/equipamentos')
+      .then(({ data }) => {
         if (data.values.length) {
           setEquipamentos(data.values);
         } else {
           setEquipamentos(null);
         }
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
-
-    getEquipamentos();
+      })
+      .catch((error) => console.log(error.message));
   }, []);
 
   /**
@@ -167,12 +165,24 @@ export default function ListEquipamentos({ history }) {
                 <TableCell>{obj.nome}</TableCell>
                 <TableCell>{obj.unidades}</TableCell>
                 <TableCell style={center}>
-                  <IconButton onClick={() => handleEdit(obj.idEquipamento)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleRemove(obj.idEquipamento)}>
-                    <Remove />
-                  </IconButton>
+                  <ButtonGroup
+                    variant="text"
+                    color="default"
+                    aria-label="botoẽs de ações da agenda"
+                  >
+                    <CustomButton
+                      color="secondary"
+                      onClick={() => handleEdit(obj.idEquipamento)}
+                    >
+                      <EditIcon />
+                    </CustomButton>
+                    <CustomButton
+                      color="error"
+                      onClick={() => handleRemove(obj.idEquipamento)}
+                    >
+                      <DeleteIcon />
+                    </CustomButton>
+                  </ButtonGroup>
                 </TableCell>
               </TableRow>
             ))}

@@ -1,4 +1,5 @@
 import React from 'react';
+
 // Css e styles
 import CssBaseline from '@material-ui/core/CssBaseline';
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
@@ -8,7 +9,6 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 // Componentes
 import Header from './components/Header';
-
 import GlobalStyles from './globalStyles';
 
 // Páginas

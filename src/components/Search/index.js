@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import PropTypes from 'prop-types';
+
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import CancelIcon from '@material-ui/icons/Cancel';
@@ -57,5 +59,11 @@ function Search({ placeholder, onSearch, clearSearch }) {
     </Container>
   );
 }
+
+Search.propTypes = {
+  placeholder: PropTypes.string.isRequired,
+  onSearch: PropTypes.func.isRequired,
+  clearSearch: PropTypes.func.isRequired,
+};
 
 export default Search;

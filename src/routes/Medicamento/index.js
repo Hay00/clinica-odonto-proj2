@@ -4,7 +4,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 // Páginas
-import CadastroMedicamento from '../../pages/CadastroMedicamento';
+import Medicamento from '../../pages/Medicamento';
 import ListMedicamentos from '../../pages/ListMedicamentos';
 
 export default function MedicamentoRoute({ match }) {
@@ -12,8 +12,8 @@ export default function MedicamentoRoute({ match }) {
   return (
     <Switch>
       <Route exact path={path} component={ListMedicamentos} />
-      <Route exact path={`${path}/cadastro`} component={CadastroMedicamento} />
-      <Route path={`${path}/editar/:id`} component={CadastroMedicamento} />
+      <Route exact path={`${path}/cadastro`} component={Medicamento} />
+      <Route path={`${path}/editar/:id`} component={Medicamento} />
     </Switch>
   );
 }

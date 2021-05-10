@@ -25,10 +25,12 @@ body{
 }
 :root {
 // Colocar cores aqui!
---clr-primary: #03a9f4;
+--clr-primary: #26a69a;
+--clr-secondary: #008ac0;
 --clr-bg: #f6f6f6;
 --clr-success: #4BB543;
 --clr-success-dark: #008410;
 --clr-error: #d32f2f;
+--clr-warning: #ffb818;
 }
 `;

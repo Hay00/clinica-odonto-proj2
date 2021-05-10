@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import Button from '@material-ui/core/Button';
 
 import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
 
 export const Container = styled.div`
   margin: 2em 10%;
@@ -34,6 +33,3 @@ export const Message = styled.p`
   justify-content: center;
 `;
 
-export const Remove = styled(DeleteIcon)`
-  color: var(--clr-error);
-`;

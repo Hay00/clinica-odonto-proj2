@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 // Material UI
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -13,25 +13,24 @@ import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
+import DeleteIcon from '@material-ui/icons/Delete';
+import DoneIcon from '@material-ui/icons/Done';
 import EditIcon from '@material-ui/icons/Edit';
 
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
-import {
-  AddButton,
-  Complete,
-  Container,
-  Heading,
-  Message,
-  Remove,
-} from './styles';
+import { AddButton, Container, Heading, Message } from './styles';
 
 // Api back-end
 import api from '../../services/api';
+
+// Componentes
+import CustomButton from '../../components/CustomButton';
 import Loading from '../../components/Loading';
 import DialogBox from '../../components/DialogBox';
 import Search from '../../components/Search';
+import DateTransformer from '../../utils/dateTransformer';
 
 export default function ListAgendamentos({ history }) {
   const [agendamentos, setAgendamentos] = useState([]);
@@ -42,20 +41,16 @@ export default function ListAgendamentos({ history }) {
    * Busca os agendamentos usando a API
    */
   useEffect(() => {
-    async function getAgendamentos() {
-      try {
-        const { data } = await api.get('/agendamentos');
+    api
+      .get('/agendamentos')
+      .then(({ data }) => {
         if (data.values.length) {
           setAgendamentos(data.values);
         } else {
           setAgendamentos(null);
         }
-      } catch (error) {
-        console.log(error.message);
-      }
-    }
-
-    getAgendamentos();
+      })
+      .catch((error) => console.log(error.message));
   }, []);
 
   /**
@@ -162,18 +157,6 @@ export default function ListAgendamentos({ history }) {
   }
 
   /**
-   * Realiza a formatação da data em SQL para JS
-   *
-   * @param {Date} date data
-   * @param {String} hora hora
-   * @returns JSX
-   */
-  function parseDate(date, hora) {
-    date = new Date(date).toLocaleDateString('pt-br');
-    return `${date} - ${hora}`;
-  }
-
-  /**
    * Renderiza o status do agendamento
    *
    * @param {Boolean} status status do agendamento
@@ -228,21 +211,36 @@ export default function ListAgendamentos({ history }) {
               <TableRow key={obj.idAgenda} hover role="checkbox">
                 <TableCell>{obj.cliente}</TableCell>
                 <TableCell>{obj.dentista}</TableCell>
-                <TableCell>{parseDate(obj.data, obj.hora)}</TableCell>
+                <TableCell>
+                  {DateTransformer.toBrl(obj.data)} - {obj.hora}
+                </TableCell>
                 <TableCell>{obj.tipo}</TableCell>
                 <TableCell>{renderStatus(obj.status)}</TableCell>
                 <TableCell style={center}>
-                  <IconButton
-                    onClick={() => handleComplete(obj.idAgenda, obj.status)}
+                  <ButtonGroup
+                    variant="text"
+                    color="default"
+                    aria-label="botoẽs de ações da agenda"
                   >
-                    <Complete />
-                  </IconButton>
-                  <IconButton onClick={() => handleEdit(obj.idAgenda)}>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton onClick={() => handleRemove(obj.idAgenda)}>
-                    <Remove />
-                  </IconButton>
+                    <CustomButton
+                      color="success"
+                      onClick={() => handleComplete(obj.idAgenda, obj.status)}
+                    >
+                      <DoneIcon />
+                    </CustomButton>
+                    <CustomButton
+                      color="secondary"
+                      onClick={() => handleEdit(obj.idAgenda)}
+                    >
+                      <EditIcon />
+                    </CustomButton>
+                    <CustomButton
+                      color="error"
+                      onClick={() => handleRemove(obj.idAgenda)}
+                    >
+                      <DeleteIcon />
+                    </CustomButton>
+                  </ButtonGroup>
                 </TableCell>
               </TableRow>
             ))}

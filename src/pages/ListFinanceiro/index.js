@@ -1,8 +1,8 @@
 import React from 'react';
 
 // Material UI
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Paper from '@material-ui/core/Paper';
 import Table from '@material-ui/core/Table';
@@ -12,6 +12,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 // Icons
 import EditIcon from '@material-ui/icons/Edit';
@@ -20,13 +21,17 @@ import SearchIcon from '@material-ui/icons/Search';
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
-import { AddButton, Container, Heading, Remove, SearchField } from './styles';
+import CustomButton from '../../components/CustomButton';
+
+import DateTransformer from '../../utils/dateTransformer';
+
+import { AddButton, Container, Heading, SearchField } from './styles';
 
 export default function ListFinanceiro() {
   const rows = [
     {
       id: 0,
-      data: new Date().toLocaleDateString('pt-br'),
+      data: new Date(),
       descricao: 'Cirurgia Dentaria',
       situacao: true,
       valor: '505.90',
@@ -34,7 +39,7 @@ export default function ListFinanceiro() {
     },
     {
       id: 1,
-      data: new Date().toLocaleDateString('pt-br'),
+      data: new Date(),
       descricao: 'Reparo Aparelho',
       situacao: true,
       valor: '505.90',
@@ -43,7 +48,7 @@ export default function ListFinanceiro() {
 
     {
       id: 2,
-      data: new Date().toLocaleDateString('pt-br'),
+      data: new Date(),
       descricao: 'Reparo Aparelho',
       situacao: true,
       valor: '505.90',
@@ -51,7 +56,7 @@ export default function ListFinanceiro() {
     },
     {
       id: 3,
-      data: new Date().toLocaleDateString('pt-br'),
+      data: new Date(),
       descricao: 'Reparo Aparelho',
       situacao: false,
       valor: -505.9,
@@ -59,7 +64,7 @@ export default function ListFinanceiro() {
     },
     {
       id: 4,
-      data: new Date().toLocaleDateString('pt-br'),
+      data: new Date(),
       descricao: 'Reparo Aparelho',
       situacao: true,
       valor: 505.9,
@@ -78,6 +83,8 @@ export default function ListFinanceiro() {
   function renderValor(valor) {
     return <p style={{ color: valor > 0 ? 'green' : 'red' }}>{valor}</p>;
   }
+
+  const center = { display: 'flex', justifyContent: 'center' };
 
   return (
     <Container>
@@ -134,18 +141,24 @@ export default function ListFinanceiro() {
             {rows.map(({ id, data, descricao, situacao, valor, envolvido }) => (
               <TableRow key={id} hover role="checkbox">
                 <TableCell>{id}</TableCell>
-                <TableCell>{data}</TableCell>
+                <TableCell>{DateTransformer.toBrl(data)}</TableCell>
                 <TableCell>{descricao}</TableCell>
                 <TableCell>{renderSituacao(situacao)}</TableCell>
                 <TableCell>{renderValor(valor)}</TableCell>
                 <TableCell>{envolvido}</TableCell>
-                <TableCell>
-                  <IconButton>
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton>
-                    <Remove />
-                  </IconButton>
+                <TableCell style={center}>
+                  <ButtonGroup
+                    variant="text"
+                    color="default"
+                    aria-label="botoẽs de ações da agenda"
+                  >
+                    <CustomButton color="secondary">
+                      <EditIcon />
+                    </CustomButton>
+                    <CustomButton color="error">
+                      <DeleteIcon />
+                    </CustomButton>
+                  </ButtonGroup>
                 </TableCell>
               </TableRow>
             ))}
