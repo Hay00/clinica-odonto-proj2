@@ -4,11 +4,8 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
@@ -19,16 +16,16 @@ import DeleteIcon from '@material-ui/icons/Delete';
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
-import { AddButton, Container, Heading, Message } from './styles';
+import { AddButton, Container, Heading } from './styles';
 
 // Componentes
 import CustomButton from '../../components/CustomButton';
 import DialogBox from '../../components/DialogBox';
-import Loading from '../../components/Loading';
 import Search from '../../components/Search';
 
 // Api
 import api from '../../services/api';
+import TableContent from '../../components/TableContent';
 
 export default function ListMedicamentos({ history }) {
   const [medicamentos, setMedicamentos] = useState([]);
@@ -133,69 +130,38 @@ export default function ListMedicamentos({ history }) {
   }
 
   /**
-   * Renderiza a tabela de acordo com os dados
-   *
-   * @returns SJX
+   * Renderiza o body da tabela
    */
-  function renderTable() {
-    const center = { display: 'flex', justifyContent: 'center' };
-
-    if (medicamentos === null) {
-      return <Message>Nenhum medicamento encontrado!</Message>;
-    }
-    if (medicamentos.length) {
-      return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <b>Nome</b>
-              </TableCell>
-              <TableCell>
-                <b>Unidades</b>
-              </TableCell>
-              <TableCell>
-                <b>Valor</b>
-              </TableCell>
-              <TableCell>
-                <b style={center}>Ações</b>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {medicamentos.map((obj) => (
-              <TableRow key={obj.idMedicamento} hover role="checkbox">
-                <TableCell>{obj.nome}</TableCell>
-                <TableCell>{obj.unidades}</TableCell>
-                <TableCell>R$ {obj.valor}</TableCell>
-                <TableCell style={center}>
-                  <ButtonGroup
-                    variant="text"
-                    color="default"
-                    aria-label="botoẽs de ações da agenda"
-                  >
-                    <CustomButton
-                      color="secondary"
-                      onClick={() => handleEdit(obj.idMedicamento)}
-                    >
-                      <EditIcon />
-                    </CustomButton>
-                    <CustomButton
-                      color="error"
-                      onClick={() => handleRemove(obj.idMedicamento)}
-                    >
-                      <DeleteIcon />
-                    </CustomButton>
-                  </ButtonGroup>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      );
-    }
-    return <Loading />;
+  function renderTableBody() {
+    return medicamentos.map((obj) => (
+      <TableRow key={obj.idMedicamento} hover role="checkbox">
+        <TableCell>{obj.nome}</TableCell>
+        <TableCell>{obj.unidades}</TableCell>
+        <TableCell>R$ {obj.valor}</TableCell>
+        <TableCell>
+          <ButtonGroup
+            variant="text"
+            color="default"
+            aria-label="botoẽs de ações da agenda"
+          >
+            <CustomButton
+              color="secondary"
+              onClick={() => handleEdit(obj.idMedicamento)}
+            >
+              <EditIcon />
+            </CustomButton>
+            <CustomButton
+              color="error"
+              onClick={() => handleRemove(obj.idMedicamento)}
+            >
+              <DeleteIcon />
+            </CustomButton>
+          </ButtonGroup>
+        </TableCell>
+      </TableRow>
+    ));
   }
+
   return (
     <Container>
       <TableContainer component={Paper} style={{ padding: '1em' }}>
@@ -218,7 +184,12 @@ export default function ListMedicamentos({ history }) {
           </div>
         </Heading>
         <Divider style={{ margin: '16px 0px 8px' }} />
-        {renderTable()}
+        <TableContent
+          columns={['Nome', 'Unidades', 'Valor']}
+          hasActions
+          body={renderTableBody()}
+          data={medicamentos}
+        />
       </TableContainer>
       <DialogBox
         type={'question'}

@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from 'react';
 
+// Material UI
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
-import { Container, Message, Heading, AddButton } from './styles';
+import { Container, Heading, AddButton } from './styles';
 
 // Api back-end
 import api from '../../services/api';
 
 // Componentes
-import Loading from '../../components/Loading';
+import TableContent from '../../components/TableContent';
+
 import DateTransformer from '../../utils/dateTransformer';
 
 export default function Main() {
   const [agendamentos, setAgendamentos] = useState([]);
-  // const [pendencias, setPendencias] = useState([]);
+  const [financas, setFinancas] = useState([]);
 
   /**
    * Busca os agendamentos usando a API
@@ -40,19 +39,17 @@ export default function Main() {
         }
       })
       .catch((error) => console.log(error.message));
+    api
+      .get('/financeiro')
+      .then(({ data }) => {
+        if (data.values.length) {
+          setFinancas(data.values);
+        } else {
+          setFinancas(null);
+        }
+      })
+      .catch((error) => console.log(error.message));
   }, []);
-
-  /**
-   * Realiza a formatação da data em SQL para JS
-   *
-   * @param {Date} date data
-   * @param {String} hora hora
-   * @returns JSX
-   */
-  function parseDate(date, hora) {
-    date = new Date(date).toLocaleDateString('pt-br');
-    return `${date} - ${hora}`;
-  }
 
   /**
    * Renderiza o status do agendamento
@@ -68,63 +65,14 @@ export default function Main() {
     );
   }
 
-  /**
-   * Renderiza a tabela de acordo com os dados
-   *
-   * @returns SJX
-   */
-  function renderTable() {
-    if (agendamentos === null) {
-      return <Message>Nenhum agendamento encontrado!</Message>;
-    }
-    if (agendamentos.length) {
-      return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <b>Cliente</b>
-              </TableCell>
-              <TableCell>
-                <b>Dentista</b>
-              </TableCell>
-              <TableCell>
-                <b>Data e Hora</b>
-              </TableCell>
-              <TableCell>
-                <b>Tipo</b>
-              </TableCell>
-              <TableCell>
-                <b>Status</b>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {agendamentos.map((obj) => (
-              <TableRow key={obj.idAgenda} hover role="checkbox">
-                <TableCell>{obj.cliente}</TableCell>
-                <TableCell>{obj.dentista}</TableCell>
-                <TableCell>
-                  {DateTransformer.toBrl(obj.data)} - {obj.hora}
-                </TableCell>
-                <TableCell>{obj.tipo}</TableCell>
-                <TableCell>{renderStatus(obj.status)}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      );
-    }
-    return <Loading />;
-  }
   return (
     <Container>
       <TableContainer component={Paper} style={{ padding: 16 }}>
         <Typography style={{ margin: 8 }} color="primary" variant="h6">
           Agendamentos
         </Typography>
+        <Divider style={{ margin: '16px 0px 8px' }} />
         <Heading>
-          <Divider style={{ margin: '16px 0px 8px' }} />
           <div>
             <AddButton component={RouterLink} to={'/agendamento/cadastro'}>
               Novo Agendamento
@@ -132,18 +80,64 @@ export default function Main() {
           </div>
         </Heading>
         <Divider style={{ margin: '16px 0px 8px' }} />
-        {renderTable()}
+        <TableContent
+          columns={['Cliente', 'Dentista', 'Data', 'Tipo', 'Status']}
+          body={agendamentos.map((obj) => (
+            <TableRow key={obj.idAgenda} hover role="checkbox">
+              <TableCell>{obj.cliente}</TableCell>
+              <TableCell>{obj.dentista}</TableCell>
+              <TableCell>
+                {DateTransformer.toBrl(obj.data)} - {obj.hora}
+              </TableCell>
+              <TableCell>{obj.tipo}</TableCell>
+              <TableCell>{renderStatus(obj.status)}</TableCell>
+            </TableRow>
+          ))}
+          data={financas}
+        />
       </TableContainer>
 
       <TableContainer component={Paper} style={{ padding: 16 }}>
         <Typography style={{ margin: 8 }} color="primary" variant="h6">
-          Pendências
+          Financeiro
         </Typography>
-        <AddButton component={RouterLink} to={'/agendamento/cadastro'}>
-          Novo Agendamento
-        </AddButton>
-        {renderTable()}
+        <Divider style={{ margin: '16px 0px 8px' }} />
+        <Heading>
+          <div>
+            <AddButton component={RouterLink} to={'/financeiro/cadastro'}>
+              Nova Finança
+            </AddButton>
+          </div>
+        </Heading>
+        <Divider style={{ margin: '16px 0px 8px' }} />
+        <TableContent
+          columns={['Cliente', 'Data', 'Descrição', 'Situação', 'Valor']}
+          body={financas.map((obj) => (
+            <TableRow key={obj.idTransacao} hover role="checkbox">
+              <TableCell>{obj.devedor}</TableCell>
+              <TableCell>{DateTransformer.toBrl(obj.data)}</TableCell>
+              <TableCell>{obj.descricao}</TableCell>
+              <TableCell>{renderStatus(obj.situacao)}</TableCell>
+              <TableCell>R$ {obj.valor}</TableCell>
+            </TableRow>
+          ))}
+          data={financas}
+        />
       </TableContainer>
     </Container>
   );
+}
+/*
+<TableContent
+  columns={['Cliente', 'Data', 'Descrição', 'Situação', 'Valor']}
+  body={renderTableBody()}
+  data={data}
+/>
+*/
+
+/**
+ * Renderiza o body da tabela
+ */
+function renderTableBody() {
+  return null;
 }

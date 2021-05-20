@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 
 import AddIcon from '@material-ui/icons/Add';
 
@@ -22,15 +21,6 @@ export const Heading = styled.div`
 export const AddButton = styled(Button).attrs(() => ({
   variant: 'contained',
   startIcon: <AddIcon />,
-}))`
-  margin: 8px;
-`;
-
-export const SearchField = styled(TextField).attrs(() => ({
-  label: 'Buscar Agendamento',
-  variant: 'outlined',
-  size: 'small',
-  type: 'search',
 }))`
   margin: 8px;
 `;

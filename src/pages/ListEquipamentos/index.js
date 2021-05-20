@@ -4,11 +4,8 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
@@ -22,13 +19,13 @@ import { Link as RouterLink } from 'react-router-dom';
 // Componentes
 import CustomButton from '../../components/CustomButton';
 import DialogBox from '../../components/DialogBox';
-import Loading from '../../components/Loading';
 import Search from '../../components/Search';
 
 // Api
 import api from '../../services/api';
 
-import { AddButton, Container, Heading, Message } from './styles';
+import { AddButton, Container, Heading } from './styles';
+import TableContent from '../../components/TableContent';
 
 export default function ListEquipamentos({ history }) {
   const [equipamentos, setEquipamentos] = useState([]);
@@ -133,65 +130,37 @@ export default function ListEquipamentos({ history }) {
   }
 
   /**
-   * Renderiza a tabela de acordo com os dados
-   *
-   * @returns SJX
+   * Renderiza o body da tabela
    */
-  function renderTable() {
-    const center = { display: 'flex', justifyContent: 'center' };
-
-    if (equipamentos === null) {
-      return <Message>Nenhum equipamento encontrado!</Message>;
-    }
-    if (equipamentos.length) {
-      return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <b>Nome</b>
-              </TableCell>
-              <TableCell>
-                <b>Unidades</b>
-              </TableCell>
-              <TableCell>
-                <b style={center}>Ações</b>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {equipamentos.map((obj) => (
-              <TableRow key={obj.idEquipamento} hover role="checkbox">
-                <TableCell>{obj.nome}</TableCell>
-                <TableCell>{obj.unidades}</TableCell>
-                <TableCell style={center}>
-                  <ButtonGroup
-                    variant="text"
-                    color="default"
-                    aria-label="botoẽs de ações da agenda"
-                  >
-                    <CustomButton
-                      color="secondary"
-                      onClick={() => handleEdit(obj.idEquipamento)}
-                    >
-                      <EditIcon />
-                    </CustomButton>
-                    <CustomButton
-                      color="error"
-                      onClick={() => handleRemove(obj.idEquipamento)}
-                    >
-                      <DeleteIcon />
-                    </CustomButton>
-                  </ButtonGroup>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      );
-    }
-    return <Loading />;
+  function renderTableBody() {
+    return equipamentos.map((obj) => (
+      <TableRow key={obj.idEquipamento} hover role="checkbox">
+        <TableCell>{obj.nome}</TableCell>
+        <TableCell>{obj.unidades}</TableCell>
+        <TableCell>
+          <ButtonGroup
+            variant="text"
+            color="default"
+            aria-label="botoẽs de ações da agenda"
+          >
+            <CustomButton
+              color="secondary"
+              onClick={() => handleEdit(obj.idEquipamento)}
+            >
+              <EditIcon />
+            </CustomButton>
+            <CustomButton
+              color="error"
+              onClick={() => handleRemove(obj.idEquipamento)}
+            >
+              <DeleteIcon />
+            </CustomButton>
+          </ButtonGroup>
+        </TableCell>
+      </TableRow>
+    ));
   }
+
   return (
     <Container>
       <TableContainer component={Paper} style={{ padding: '1em' }}>
@@ -214,7 +183,12 @@ export default function ListEquipamentos({ history }) {
           </div>
         </Heading>
         <Divider style={{ margin: '16px 0px 8px' }} />
-        {renderTable()}
+        <TableContent
+          columns={['Nome', 'Unidades']}
+          hasActions
+          body={renderTableBody()}
+          data={equipamentos}
+        />
       </TableContainer>
       <DialogBox
         type={'question'}

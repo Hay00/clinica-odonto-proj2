@@ -25,10 +25,3 @@ export const AddButton = styled(Button).attrs(() => ({
   margin: 8px;
 `;
 
-export const Message = styled.p`
-  display: flex;
-  color: gray;
-  margin: 60px auto;
-  font-size: 18px;
-  justify-content: center;
-`;

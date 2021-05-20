@@ -10,14 +10,6 @@ export const Container = styled.div`
   margin: 2em 5%;
 `;
 
-export const Message = styled.p`
-  display: flex;
-  color: gray;
-  margin: 60px auto;
-  font-size: 18px;
-  justify-content: center;
-`;
-
 export const Heading = styled.div`
   display: flex;
   flex-direction: column;

@@ -4,11 +4,8 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
@@ -20,17 +17,17 @@ import EditIcon from '@material-ui/icons/Edit';
 // Link do router
 import { Link as RouterLink } from 'react-router-dom';
 
-import { AddButton, Container, Heading, Message } from './styles';
+import { AddButton, Container, Heading } from './styles';
 
 // Api back-end
 import api from '../../services/api';
 
 // Componentes
 import CustomButton from '../../components/CustomButton';
-import Loading from '../../components/Loading';
 import DialogBox from '../../components/DialogBox';
 import Search from '../../components/Search';
 import DateTransformer from '../../utils/dateTransformer';
+import TableContent from '../../components/TableContent';
 
 export default function ListAgendamentos({ history }) {
   const [agendamentos, setAgendamentos] = useState([]);
@@ -171,84 +168,46 @@ export default function ListAgendamentos({ history }) {
   }
 
   /**
-   * Renderiza a tabela de acordo com os dados
-   *
-   * @returns SJX
+   * Renderiza o body da tabela
    */
-  function renderTable() {
-    const center = { display: 'flex', justifyContent: 'center' };
-
-    if (agendamentos === null) {
-      return <Message>Nenhum agendamento encontrado!</Message>;
-    }
-    if (agendamentos.length) {
-      return (
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <b>Cliente</b>
-              </TableCell>
-              <TableCell>
-                <b>Dentista</b>
-              </TableCell>
-              <TableCell>
-                <b>Data e Hora</b>
-              </TableCell>
-              <TableCell>
-                <b>Tipo</b>
-              </TableCell>
-              <TableCell>
-                <b>Status</b>
-              </TableCell>
-              <TableCell>
-                <b style={center}>Ações</b>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {agendamentos.map((obj) => (
-              <TableRow key={obj.idAgenda} hover role="checkbox">
-                <TableCell>{obj.cliente}</TableCell>
-                <TableCell>{obj.dentista}</TableCell>
-                <TableCell>
-                  {DateTransformer.toBrl(obj.data)} - {obj.hora}
-                </TableCell>
-                <TableCell>{obj.tipo}</TableCell>
-                <TableCell>{renderStatus(obj.status)}</TableCell>
-                <TableCell style={center}>
-                  <ButtonGroup
-                    variant="text"
-                    color="default"
-                    aria-label="botoẽs de ações da agenda"
-                  >
-                    <CustomButton
-                      color="success"
-                      onClick={() => handleComplete(obj.idAgenda, obj.status)}
-                    >
-                      <DoneIcon />
-                    </CustomButton>
-                    <CustomButton
-                      color="secondary"
-                      onClick={() => handleEdit(obj.idAgenda)}
-                    >
-                      <EditIcon />
-                    </CustomButton>
-                    <CustomButton
-                      color="error"
-                      onClick={() => handleRemove(obj.idAgenda)}
-                    >
-                      <DeleteIcon />
-                    </CustomButton>
-                  </ButtonGroup>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      );
-    }
-    return <Loading />;
+  function renderTableBody() {
+    return agendamentos.map((obj) => (
+      <TableRow key={obj.idAgenda} hover role="checkbox">
+        <TableCell>{obj.cliente}</TableCell>
+        <TableCell>{obj.dentista}</TableCell>
+        <TableCell>
+          {DateTransformer.toBrl(obj.data)} - {obj.hora}
+        </TableCell>
+        <TableCell>{obj.tipo}</TableCell>
+        <TableCell>{renderStatus(obj.status)}</TableCell>
+        <TableCell>
+          <ButtonGroup
+            variant="text"
+            color="default"
+            aria-label="botoẽs de ações da agenda"
+          >
+            <CustomButton
+              color="success"
+              onClick={() => handleComplete(obj.idAgenda, obj.status)}
+            >
+              <DoneIcon />
+            </CustomButton>
+            <CustomButton
+              color="secondary"
+              onClick={() => handleEdit(obj.idAgenda)}
+            >
+              <EditIcon />
+            </CustomButton>
+            <CustomButton
+              color="error"
+              onClick={() => handleRemove(obj.idAgenda)}
+            >
+              <DeleteIcon />
+            </CustomButton>
+          </ButtonGroup>
+        </TableCell>
+      </TableRow>
+    ));
   }
 
   return (
@@ -273,7 +232,12 @@ export default function ListAgendamentos({ history }) {
           </div>
         </Heading>
         <Divider style={{ margin: '16px 0px 8px' }} />
-        {renderTable()}
+        <TableContent
+          columns={['Cliente', 'Dentista', 'Data', 'Tipo', 'Status']}
+          hasActions
+          body={renderTableBody()}
+          data={agendamentos}
+        />
       </TableContainer>
       <DialogBox
         type={'question'}
