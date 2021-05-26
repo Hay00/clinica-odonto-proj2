@@ -13,7 +13,6 @@ import GlobalStyles from './globalStyles';
 
 // Páginas
 import Compras from './pages/Compras';
-import ListFinanceiro from './pages/ListFinanceiro';
 import Login from './pages/Login';
 import Main from './pages/Main';
 import Pagamento from './pages/Pagamento';
@@ -24,6 +23,7 @@ import Venda from './pages/Venda';
 import AgendamentoRoute from './routes/Agendamento';
 import ClienteRoute from './routes/Cliente';
 import EquipamentoRoute from './routes/Equipamento';
+import FinanceiroRoute from './routes/Financeiro';
 import FuncionarioRoute from './routes/Funcionario';
 import MedicamentoRoute from './routes/Medicamento';
 
@@ -42,10 +42,10 @@ export default function App() {
               <Route path="/agendamento" component={AgendamentoRoute} />
               <Route path="/cliente" component={ClienteRoute} />
               <Route path="/equipamento" component={EquipamentoRoute} />
+              <Route path="/financeiro" component={FinanceiroRoute} />
               <Route path="/funcionario" component={FuncionarioRoute} />
               <Route path="/medicamento" component={MedicamentoRoute} />
               <Route exact path="/compras" component={Compras} />
-              <Route exact path="/financeiro" component={ListFinanceiro} />
               <Route exact path="/login" component={Login} />
               <Route exact path="/pagamento" component={Pagamento} />
               <Route exact path="/relatorios" component={Relatorios} />
