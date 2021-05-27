@@ -25,7 +25,7 @@ import Loading from '../../components/Loading';
 import api from '../../services/api';
 
 import { Container, InputContainer, SaveButton } from './styles';
-import CpfValidator from '../../utils/cpfValidator';
+import cpfUtil from '../../utils/cpfUtils';
 
 export default function CadastroCliente({ history, location }) {
   const { id } = useParams();
@@ -94,14 +94,11 @@ export default function CadastroCliente({ history, location }) {
    */
   function handleCpfChange({ target }) {
     let { value } = target;
-    // Apenas números
-    value = value.replace(/[^\d]/g, '');
 
-    setErrCpf(!CpfValidator.validate(value));
+    setErrCpf(!cpfUtil.validate(value));
 
     // Formata o CPF
-    value = value.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
-    setCpf(value);
+    setCpf(cpfUtil.mask(value));
   }
 
   if (loading) {

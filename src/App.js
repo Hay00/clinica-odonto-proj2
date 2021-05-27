@@ -8,6 +8,7 @@ import ThemeProvider from '@material-ui/styles/ThemeProvider';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 // Componentes
+// import Footer from './components/Footer';
 import Header from './components/Header';
 import GlobalStyles from './globalStyles';
 
@@ -36,7 +37,14 @@ export default function App() {
       <ThemeProvider theme={defaultTheme}>
         <div style={{ display: 'flex' }}>
           <Header />
-          <div style={{ marginTop: 64, width: '100%' }}>
+          <div
+            style={{
+              marginTop: 64,
+              width: '100%',
+              minHeight: 'calc(-54px + 90vh)',
+              padding: '40px 40px 0 40px',
+            }}
+          >
             <Switch>
               <Route exact path="/" component={Main} />
               <Route path="/agendamento" component={AgendamentoRoute} />

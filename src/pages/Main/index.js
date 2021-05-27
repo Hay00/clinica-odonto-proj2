@@ -127,17 +127,3 @@ export default function Main() {
     </Container>
   );
 }
-/*
-<TableContent
-  columns={['Cliente', 'Data', 'Descrição', 'Situação', 'Valor']}
-  body={renderTableBody()}
-  data={data}
-/>
-*/
-
-/**
- * Renderiza o body da tabela
- */
-function renderTableBody() {
-  return null;
-}

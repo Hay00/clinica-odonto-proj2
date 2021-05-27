@@ -1,97 +1,108 @@
-import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
+import React, { useState } from 'react';
+
+// Material UI
 import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import Button from '@material-ui/core/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Grid from '@material-ui/core/Grid';
+import Link from '@material-ui/core/Link';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
 
-function Copyright() {
+// Icons
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+
+import { AvatarIcon, Container, ErrorMessage, Wrapper } from './styles';
+
+// Api back-end
+import api from '../../services/api';
+
+import cpfUtil from '../../utils/cpfUtils';
+
+import { login as loginUser } from '../../services/auth';
+
+export default function Login({ history }) {
+  const [login, setLogin] = useState('');
+  const [senha, setSenha] = useState('');
+  const [error, setError] = useState('');
+
+  function handleLoginChange({ target }) {
+    let { value } = target;
+    setLogin(cpfUtil.mask(value));
+  }
+
+  /**
+   * Realiza o login do usuário
+   *
+   * @param {Event} event do componente
+   */
+  async function makeLogin(event) {
+    event.preventDefault();
+
+    if (!login || !senha) {
+      setError('Preencha login e senha para continuar!');
+    } else {
+      api
+        .post('/funcionarios/login', { login, senha })
+        .then(({ data }) => {
+          loginUser(data.token, data.user);
+          history.push('/');
+        })
+        .catch((e) =>
+          setError('Não foi possível realizar o login, dados inválidos')
+        );
+    }
+  }
+
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
-        Clinica Odonto
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%',
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
-
-export default function SignIn() {
-  const classes = useStyles();
-
-  return (
-    <Container component="main" maxWidth="xs">
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
+    <Container>
+      <Wrapper>
+        <AvatarIcon>
           <LockOutlinedIcon />
-        </Avatar>
+        </AvatarIcon>
         <Typography component="h1" variant="h5">
           Login
         </Typography>
-        <form className={classes.form} noValidate>
+        <form style={{ width: '100%', marginTop: '8px' }} onSubmit={makeLogin}>
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Endereço de Email"
-            name="email"
-            autoComplete="email"
+            id="cpf"
+            label="CPF"
+            name="login"
+            autoComplete="cpf"
             autoFocus
+            value={login}
+            inputProps={{ maxLength: 14 }}
+            onChange={handleLoginChange}
           />
           <TextField
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            name="password"
+            name="senha"
             label="Senha"
             type="password"
             id="password"
             autoComplete="current-password"
+            value={senha}
+            onChange={({ target }) => setSenha(target.value)}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Lembrar-me"
           />
+          {error && <ErrorMessage>{error}</ErrorMessage>}
           <Button
             type="submit"
             fullWidth
             variant="contained"
             color="primary"
-            className={classes.submit}
+            style={{ margin: '24px 0px 16px' }}
           >
             Entrar
           </Button>
@@ -103,16 +114,25 @@ export default function SignIn() {
             </Grid>
             <Grid item>
               <Link href="#" variant="body2">
-                {"Não possue uma conta? Inscreva-se"}
+                Não possue uma conta? Inscreva-se
               </Link>
             </Grid>
           </Grid>
         </form>
-      </div>
+      </Wrapper>
       <Box mt={8}>
-        <Copyright />
+        <Typography variant="body2" color="textSecondary" align="center">
+          {'Copyright © '}
+          <Link
+            color="inherit"
+            href="https://github.com/Hay00/clinica-odonto-proj2"
+          >
+            Clinica Odonto
+          </Link>{' '}
+          {new Date().getFullYear()}
+          {'.'}
+        </Typography>
       </Box>
     </Container>
   );
 }
-

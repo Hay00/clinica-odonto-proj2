@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // Componentes Material-ui
 import AppBar from '@material-ui/core/AppBar';
@@ -33,14 +33,26 @@ import clsx from 'clsx';
 import { GiMedicines } from 'react-icons/gi';
 
 // Link do router
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation, useHistory } from 'react-router-dom';
 import { Container, Logo, User, useStyles } from './styles';
 
-export default function Header({ children }) {
+// API
+import { isAuthenticated, getUser, logout } from '../../services/auth';
+
+export default function Header() {
   const classes = useStyles();
   const theme = useTheme();
+
+  const location = useLocation();
+  const history = useHistory();
+
+  const [hasLogin, sethasLogin] = useState(false);
   const [openDrawer, setOpenDrawer] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
+
+  useEffect(() => {
+    sethasLogin(isAuthenticated());
+  }, [location]);
 
   /**
    * Associa o componente aberto
@@ -55,6 +67,15 @@ export default function Header({ children }) {
    */
   function handleClose() {
     setOpenMenu(null);
+  }
+
+  /**
+   * Faz o logoff do user
+   */
+  function handleLogOut() {
+    setOpenMenu(null);
+    logout();
+    history.push('/login');
   }
 
   return (
@@ -83,7 +104,7 @@ export default function Header({ children }) {
           <Typography variant="h6" noWrap>
             Clinica Odonto
           </Typography>
-          {true && (
+          {hasLogin && (
             <User>
               <IconButton
                 aria-label="more"
@@ -109,9 +130,9 @@ export default function Header({ children }) {
                   variant="subtitle1"
                   gutterBottom
                 >
-                  email.exemplo@mail.com
+                  {getUser() || 'Anon'}
                 </Typography>
-                <MenuItem onClick={() => console.log('logout')}>Sair</MenuItem>
+                <MenuItem onClick={handleLogOut}>Sair</MenuItem>
               </Menu>
             </User>
           )}

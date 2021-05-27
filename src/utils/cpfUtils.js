@@ -28,4 +28,22 @@ export default class CpfValidator {
     if (resto !== parseInt(cpf.substring(10, 11))) return false;
     return true;
   }
+
+  /**
+   * Formata qualquer cpf
+   * @param {String} cpf a ser formatado
+   * @returns
+   */
+  static mask(cpf) {
+    // Apenas números
+    cpf = cpf.replace(/[^\d]/g, '');
+
+    // Formata conforme o formato do cpf
+    cpf = cpf.replace(/\D/g, '');
+    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+    cpf = cpf.replace(/(\d{3})(\d)/, '$1.$2');
+    cpf = cpf.replace(/(\d{3})(\d{1,2})/, '$1-$2');
+    cpf = cpf.replace(/(-\d{2})\d+?$/, '$1');
+    return cpf;
+  }
 }
