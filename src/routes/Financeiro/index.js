@@ -4,7 +4,7 @@ import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
 // Páginas
- import CadastroFinanceiro from '../../pages/Financeiro';
+import CadastroFinanceiro from '../../pages/Financeiro';
 import ListFinanceiro from '../../pages/ListFinanceiro';
 
 export default function FinanceiroRoute({ match }) {
@@ -12,8 +12,8 @@ export default function FinanceiroRoute({ match }) {
   return (
     <Switch>
       <Route exact path={path} component={ListFinanceiro} />
-       <Route exact path={`${path}/cadastro`} component={CadastroFinanceiro} /> 
-       <Route path={`${path}/editar/:id`} component={CadastroFinanceiro} /> 
+      <Route exact path={`${path}/cadastro`} component={CadastroFinanceiro} />
+      <Route path={`${path}/editar/:id`} component={CadastroFinanceiro} />
     </Switch>
   );
 }

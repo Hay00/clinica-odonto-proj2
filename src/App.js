@@ -2,13 +2,14 @@ import React from 'react';
 
 // Css e styles
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { StylesProvider } from '@material-ui/core/styles';
 import ThemeProvider from '@material-ui/styles/ThemeProvider';
 
 // Dom Router
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 
 // Componentes
-// import Footer from './components/Footer';
+import Footer from './components/Footer';
 import Header from './components/Header';
 import GlobalStyles from './globalStyles';
 
@@ -34,37 +35,39 @@ import { defaultTheme } from './theme';
 export default function App() {
   return (
     <BrowserRouter>
-      <ThemeProvider theme={defaultTheme}>
-        <div style={{ display: 'flex' }}>
-          <Header />
-          <div
-            style={{
-              marginTop: 64,
-              width: '100%',
-              minHeight: 'calc(-54px + 90vh)',
-              padding: '40px 40px 0 40px',
-            }}
-          >
-            <Switch>
-              <Route exact path="/" component={Main} />
-              <Route path="/agendamento" component={AgendamentoRoute} />
-              <Route path="/cliente" component={ClienteRoute} />
-              <Route path="/equipamento" component={EquipamentoRoute} />
-              <Route path="/financeiro" component={FinanceiroRoute} />
-              <Route path="/funcionario" component={FuncionarioRoute} />
-              <Route path="/medicamento" component={MedicamentoRoute} />
-              <Route exact path="/compras" component={Compras} />
-              <Route exact path="/login" component={Login} />
-              <Route exact path="/pagamento" component={Pagamento} />
-              <Route exact path="/relatorios" component={Relatorios} />
-              <Route exact path="/venda" component={Venda} />
-            </Switch>
+      <StylesProvider injectFirst>
+        <ThemeProvider theme={defaultTheme}>
+          <div style={{ display: 'flex' }}>
+            <Header />
+            <div
+              style={{
+                marginTop: 64,
+                width: '100%',
+                minHeight: 'calc(-48px + 90vh)',
+                padding: '40px 40px 0 40px',
+              }}
+            >
+              <Switch>
+                <Route exact path="/" component={Main} />
+                <Route path="/agendamento" component={AgendamentoRoute} />
+                <Route path="/cliente" component={ClienteRoute} />
+                <Route path="/equipamento" component={EquipamentoRoute} />
+                <Route path="/financeiro" component={FinanceiroRoute} />
+                <Route path="/funcionario" component={FuncionarioRoute} />
+                <Route path="/medicamento" component={MedicamentoRoute} />
+                <Route exact path="/compras" component={Compras} />
+                <Route exact path="/login" component={Login} />
+                <Route exact path="/pagamento" component={Pagamento} />
+                <Route exact path="/relatorios" component={Relatorios} />
+                <Route exact path="/venda" component={Venda} />
+              </Switch>
+            </div>
           </div>
-        </div>
-        {/* <Footer /> */}
-        <CssBaseline />
-        <GlobalStyles />
-      </ThemeProvider>
+          <Footer />
+          <CssBaseline />
+          <GlobalStyles />
+        </ThemeProvider>
+      </StylesProvider>
     </BrowserRouter>
   );
 }

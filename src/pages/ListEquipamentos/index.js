@@ -133,6 +133,7 @@ export default function ListEquipamentos({ history }) {
    * Renderiza o body da tabela
    */
   function renderTableBody() {
+    if (!equipamentos) return null;
     return equipamentos.map((obj) => (
       <TableRow key={obj.idEquipamento} hover role="checkbox">
         <TableCell>{obj.nome}</TableCell>
