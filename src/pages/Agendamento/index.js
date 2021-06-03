@@ -196,7 +196,7 @@ export default function CadastroAgendamento({ history, location }) {
       <div>
         <MuiPickersUtilsProvider utils={DateFnsUtils} locale={ptBR}>
           <KeyboardDatePicker
-            style={{ margin: 8, width: 165 }}
+            style={{ margin: 8, width: 185 }}
             id={'date'}
             name={'date'}
             autoOk

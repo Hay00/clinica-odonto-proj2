@@ -171,6 +171,7 @@ export default function ListAgendamentos({ history }) {
    * Renderiza o body da tabela
    */
   function renderTableBody() {
+    if (!agendamentos) return null;
     return agendamentos.map((obj) => (
       <TableRow key={obj.idAgenda} hover role="checkbox">
         <TableCell>{obj.cliente}</TableCell>

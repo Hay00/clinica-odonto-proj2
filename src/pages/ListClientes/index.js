@@ -132,6 +132,7 @@ export default function ListClientes({ history }) {
    * Renderiza o body da tabela
    */
   function renderTableBody() {
+    if (!clientes) return null;
     return clientes.map((obj) => (
       <TableRow key={obj.idCliente} hover role="checkbox">
         <TableCell>{obj.nome}</TableCell>

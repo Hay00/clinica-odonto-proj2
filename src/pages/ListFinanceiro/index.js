@@ -148,11 +148,13 @@ export default function ListFinanceiro({ history }) {
    * Renderiza o body da tabela
    */
   function renderTableBody() {
+    if (!financas) return null;
     return financas.map((obj) => (
       <TableRow key={obj.idTransacao} hover role="checkbox">
-        <TableCell>{obj.devedor}</TableCell>
+        <TableCell>{obj.contato}</TableCell>
         <TableCell>{DateTransformer.toBrl(obj.data)}</TableCell>
         <TableCell>{obj.descricao}</TableCell>
+        <TableCell>{obj.tipo}</TableCell>
         <TableCell>{renderStatus(obj.situacao)}</TableCell>
         <TableCell>R$ {obj.valor}</TableCell>
         <TableCell>
@@ -203,8 +205,9 @@ export default function ListFinanceiro({ history }) {
         <Divider style={{ margin: '16px 0px 8px' }} />
         <TableContent
           columns={[
-            'Cliente/Fornecedor',
+            'Contato',
             'Data',
+            'Tipo',
             'Descrição',
             'Situação',
             'Valor',
