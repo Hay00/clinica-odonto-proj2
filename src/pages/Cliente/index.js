@@ -10,6 +10,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import { TextareaAutosize } from '@material-ui/core';
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
@@ -169,6 +170,17 @@ export default function CadastroCliente({ history, location }) {
           </Select>
         </FormControl>
       </div>
+
+      <div>
+        <TextareaAutosize
+            style={{ margin: 10, minWidth: 200 }}
+            fullWidth
+            rowsMax={3}
+            aria-label="maximum height"
+            placeholder="Insira aqui a Anamnese"   
+        />
+      </div>
+
       <div style={{ margin: 8 }}>
         <SaveButton onClick={onSave}>Salvar</SaveButton>
       </div>
