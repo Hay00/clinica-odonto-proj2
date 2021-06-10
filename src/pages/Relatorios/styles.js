@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 
-import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 
 export const Container = styled(Paper)`
@@ -17,16 +16,4 @@ export const InputContainer = styled.div`
   display: inline-flex;
   margin: 8px;
   max-width: 500px;
-`;
-
-export const SaveButton = styled(Button).attrs(() => ({
-  variant: 'contained',
-  color: 'primary',
-}))`
-  background-color: var(--clr-success);
-
-  &:hover,
-  focus-visible {
-    background-color: var(--clr-success-dark);
-  }
 `;

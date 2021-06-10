@@ -1,19 +1,29 @@
 import React from 'react';
 
 //Router
-import { Route, Switch } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 
 // Páginas
 import CadastroFinanceiro from '../../pages/Financeiro';
 import ListFinanceiro from '../../pages/ListFinanceiro';
 
+// Rota Privada
+import { PrivateRoute } from '../PrivateRoute';
+
 export default function FinanceiroRoute({ match }) {
   const { path } = match;
   return (
     <Switch>
-      <Route exact path={path} component={ListFinanceiro} />
-      <Route exact path={`${path}/cadastro`} component={CadastroFinanceiro} />
-      <Route path={`${path}/editar/:id`} component={CadastroFinanceiro} />
+      <PrivateRoute exact path={path} component={ListFinanceiro} />
+      <PrivateRoute
+        exact
+        path={`${path}/cadastro`}
+        component={CadastroFinanceiro}
+      />
+      <PrivateRoute
+        path={`${path}/editar/:id`}
+        component={CadastroFinanceiro}
+      />
     </Switch>
   );
 }

@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -20,13 +18,12 @@ import { Link as RouterLink } from 'react-router-dom';
 import CustomButton from '../../components/CustomButton';
 import DialogBox from '../../components/DialogBox';
 import Search from '../../components/Search';
+import TableContent from '../../components/TableContent';
 
 // Api
 import api from '../../services/api';
 
-import DateTransformer from '../../utils/dateTransformer';
 import { AddButton, Container, Heading } from './styles';
-import TableContent from '../../components/TableContent';
 
 export default function ListFinanceiro({ history }) {
   const [financas, setFinancas] = useState([]);
@@ -38,7 +35,7 @@ export default function ListFinanceiro({ history }) {
    */
   useEffect(() => {
     api
-      .get('/financeiro')
+      .get('/financeiro', { params: { format: true } })
       .then(({ data }) => {
         if (data.values.length) {
           setFinancas(data.values);
@@ -52,18 +49,19 @@ export default function ListFinanceiro({ history }) {
   /**
    * Abre a página para realizar alterações da finança
    *
-   * @param {String} id id da finança
+   * @param {String} idTransacao id da finança
    */
-  function handleEdit(id) {
-    history.push(`/financeiro/editar/${id}`);
+  function handleEdit(idTransacao) {
+    history.push(`/financeiro/editar/${idTransacao}`);
   }
 
   /**
    * Abre uma janela de dialogo para remover da finança
-   * @param {String} id id da finança
+   *
+   * @param {String} idTransacao id da finança
    */
-  function handleRemove(id) {
-    setToRemove(id);
+  function handleRemove(idTransacao) {
+    setToRemove(idTransacao);
     setShowDialog(true);
   }
 
@@ -74,9 +72,7 @@ export default function ListFinanceiro({ history }) {
     try {
       const result = await api.delete(`/financeiro/${toRemove}`);
       if (result) {
-        const rest = financas.filter(
-          ({ idTransacao }) => idTransacao !== toRemove
-        );
+        const rest = financas.filter(({ id }) => id !== toRemove);
         setFinancas(rest.length ? rest : null);
       }
       setToRemove(null);
@@ -119,7 +115,7 @@ export default function ListFinanceiro({ history }) {
    */
   async function clearSearch() {
     try {
-      const { data } = await api.get('/financeiro');
+      const { data } = await api.get('/financeiro', { params: { format: true } });
       if (data.values.length) {
         setFinancas(data.values);
       } else {
@@ -131,53 +127,19 @@ export default function ListFinanceiro({ history }) {
   }
 
   /**
-   * Renderiza o status do financeiro
-   *
-   * @param {Boolean} status status do financeiro
-   * @returns JSX
-   */
-  function renderStatus(status) {
-    return (
-      <p style={{ color: status ? 'green' : 'red' }}>
-        {status ? 'Concluída' : 'Pendente'}
-      </p>
-    );
-  }
-
-  /**
    * Renderiza o body da tabela
    */
-  function renderTableBody() {
+  function renderActions() {
     if (!financas) return null;
     return financas.map((obj) => (
-      <TableRow key={obj.idTransacao} hover role="checkbox">
-        <TableCell>{obj.contato}</TableCell>
-        <TableCell>{DateTransformer.toBrl(obj.data)}</TableCell>
-        <TableCell>{obj.descricao}</TableCell>
-        <TableCell>{obj.tipo}</TableCell>
-        <TableCell>{renderStatus(obj.situacao)}</TableCell>
-        <TableCell>R$ {obj.valor}</TableCell>
-        <TableCell>
-          <ButtonGroup
-            variant="text"
-            color="default"
-            aria-label="botoẽs de ações da agenda"
-          >
-            <CustomButton
-              color="secondary"
-              onClick={() => handleEdit(obj.idTransacao)}
-            >
-              <EditIcon />
-            </CustomButton>
-            <CustomButton
-              color="error"
-              onClick={() => handleRemove(obj.idTransacao)}
-            >
-              <DeleteIcon />
-            </CustomButton>
-          </ButtonGroup>
-        </TableCell>
-      </TableRow>
+      <ButtonGroup variant="text" color="default" aria-label="botoẽs de ações">
+        <CustomButton color="secondary" onClick={() => handleEdit(obj.id)}>
+          <EditIcon />
+        </CustomButton>
+        <CustomButton color="error" onClick={() => handleRemove(obj.id)}>
+          <DeleteIcon />
+        </CustomButton>
+      </ButtonGroup>
     ));
   }
 
@@ -212,8 +174,7 @@ export default function ListFinanceiro({ history }) {
             'Situação',
             'Valor',
           ]}
-          hasActions
-          body={renderTableBody()}
+          actions={renderActions()}
           data={financas}
         />
       </TableContainer>

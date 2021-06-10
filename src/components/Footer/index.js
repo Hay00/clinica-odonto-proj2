@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Ícones
-import { FaNodeJs, FaReact, FaGithub } from 'react-icons/fa';
+import { FaNodeJs, FaReact, FaGithub, FaJsSquare } from 'react-icons/fa';
 
 import { Container, LinkButton, Text, Wrapper } from './styles';
 
@@ -16,6 +16,9 @@ export default function Footer() {
       </Wrapper>
       <Wrapper>
         <Text>Tecnologias utilizadas:</Text>
+        <LinkButton>
+          <FaJsSquare color="#f7df1e" size={30} />
+        </LinkButton>
         <LinkButton>
           <FaReact color="#61dbfb" size={30} />
         </LinkButton>

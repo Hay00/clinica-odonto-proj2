@@ -31,6 +31,7 @@ import MedicamentoRoute from './routes/Medicamento';
 
 // Tema
 import { defaultTheme } from './theme';
+import { PrivateRoute } from './routes/PrivateRoute';
 
 export default function App() {
   return (
@@ -48,18 +49,30 @@ export default function App() {
               }}
             >
               <Switch>
-                <Route exact path="/" component={Main} />
-                <Route path="/agendamento" component={AgendamentoRoute} />
-                <Route path="/cliente" component={ClienteRoute} />
-                <Route path="/equipamento" component={EquipamentoRoute} />
-                <Route path="/financeiro" component={FinanceiroRoute} />
-                <Route path="/funcionario" component={FuncionarioRoute} />
-                <Route path="/medicamento" component={MedicamentoRoute} />
-                <Route exact path="/compras" component={Compras} />
+                <PrivateRoute exact path="/" component={Main} />
+                <PrivateRoute
+                  path="/agendamento"
+                  component={AgendamentoRoute}
+                />
+                <PrivateRoute path="/cliente" component={ClienteRoute} />
+                <PrivateRoute
+                  path="/equipamento"
+                  component={EquipamentoRoute}
+                />
+                <PrivateRoute path="/financeiro" component={FinanceiroRoute} />
+                <PrivateRoute
+                  path="/funcionario"
+                  component={FuncionarioRoute}
+                />
+                <PrivateRoute
+                  path="/medicamento"
+                  component={MedicamentoRoute}
+                />
+                <PrivateRoute exact path="/compras" component={Compras} />
                 <Route exact path="/login" component={Login} />
-                <Route exact path="/pagamento" component={Pagamento} />
-                <Route exact path="/relatorios" component={Relatorios} />
-                <Route exact path="/venda" component={Venda} />
+                <PrivateRoute exact path="/pagamento" component={Pagamento} />
+                <PrivateRoute exact path="/relatorios" component={Relatorios} />
+                <PrivateRoute exact path="/venda" component={Venda} />
               </Switch>
             </div>
           </div>

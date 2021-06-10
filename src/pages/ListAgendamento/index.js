@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
@@ -26,7 +24,6 @@ import api from '../../services/api';
 import CustomButton from '../../components/CustomButton';
 import DialogBox from '../../components/DialogBox';
 import Search from '../../components/Search';
-import DateTransformer from '../../utils/dateTransformer';
 import TableContent from '../../components/TableContent';
 
 export default function ListAgendamentos({ history }) {
@@ -39,7 +36,7 @@ export default function ListAgendamentos({ history }) {
    */
   useEffect(() => {
     api
-      .get('/agendamentos')
+      .get('/agendamentos', { params: { format: true } })
       .then(({ data }) => {
         if (data.values.length) {
           setAgendamentos(data.values);
@@ -53,16 +50,16 @@ export default function ListAgendamentos({ history }) {
   /**
    * Marca como concluído o agendamento
    *
-   * @param {String} id id do agendamento
+   * @param {String} idAgenda id do agendamento
    */
-  async function handleComplete(id, status) {
+  async function handleComplete(idAgenda, status) {
     try {
-      const result = await api.put(`/agendamentos/completo/${id}`, {
+      const result = await api.put(`/agendamentos/completo/${idAgenda}`, {
         concluida: !status,
       });
       if (result) {
         const values = agendamentos.map((obj) => {
-          obj.status = obj.idAgenda === id ? !status : obj.status;
+          obj.status = obj.id === idAgenda ? !status : obj.status;
           return obj;
         });
         setAgendamentos(values);
@@ -75,18 +72,18 @@ export default function ListAgendamentos({ history }) {
   /**
    * Abre a página para realizar alterações no agendamento
    *
-   * @param {String} id id do agendamento
+   * @param {String} idAgenda id do agendamento
    */
-  function handleEdit(id) {
-    history.push(`/agendamento/editar/${id}`);
+  function handleEdit(idAgenda) {
+    history.push(`/agendamento/editar/${idAgenda}`);
   }
 
   /**
    * Abre uma janela de dialogo para remover um agendamento
-   * @param {String} id id do agendamento
+   * @param {String} idAgenda id do agendamento
    */
-  function handleRemove(id) {
-    setToRemove(id);
+  function handleRemove(idAgenda) {
+    setToRemove(idAgenda);
     setShowDialog(true);
   }
 
@@ -97,9 +94,7 @@ export default function ListAgendamentos({ history }) {
     try {
       const result = await api.delete(`/agendamentos/${toRemove}`);
       if (result) {
-        const rest = agendamentos.filter(
-          ({ idAgenda }) => idAgenda !== toRemove
-        );
+        const rest = agendamentos.filter(({ id }) => id !== toRemove);
         setAgendamentos(rest.length ? rest : null);
       }
       setToRemove(null);
@@ -142,7 +137,7 @@ export default function ListAgendamentos({ history }) {
    */
   async function clearSearch() {
     try {
-      const { data } = await api.get('/agendamentos');
+      const { data } = await api.get('/agendamentos', { params: { format: true } });
       if (data.values.length) {
         setAgendamentos(data.values);
       } else {
@@ -154,60 +149,25 @@ export default function ListAgendamentos({ history }) {
   }
 
   /**
-   * Renderiza o status do agendamento
-   *
-   * @param {Boolean} status status do agendamento
-   * @returns JSX
-   */
-  function renderStatus(status) {
-    return (
-      <p style={{ color: status ? 'green' : 'red' }}>
-        {status ? 'Concluída' : 'Pendente'}
-      </p>
-    );
-  }
-
-  /**
    * Renderiza o body da tabela
    */
-  function renderTableBody() {
+  function renderActions() {
     if (!agendamentos) return null;
     return agendamentos.map((obj) => (
-      <TableRow key={obj.idAgenda} hover role="checkbox">
-        <TableCell>{obj.cliente}</TableCell>
-        <TableCell>{obj.dentista}</TableCell>
-        <TableCell>
-          {DateTransformer.toBrl(obj.data)} - {obj.hora}
-        </TableCell>
-        <TableCell>{obj.tipo}</TableCell>
-        <TableCell>{renderStatus(obj.status)}</TableCell>
-        <TableCell>
-          <ButtonGroup
-            variant="text"
-            color="default"
-            aria-label="botoẽs de ações da agenda"
-          >
-            <CustomButton
-              color="success"
-              onClick={() => handleComplete(obj.idAgenda, obj.status)}
-            >
-              <DoneIcon />
-            </CustomButton>
-            <CustomButton
-              color="secondary"
-              onClick={() => handleEdit(obj.idAgenda)}
-            >
-              <EditIcon />
-            </CustomButton>
-            <CustomButton
-              color="error"
-              onClick={() => handleRemove(obj.idAgenda)}
-            >
-              <DeleteIcon />
-            </CustomButton>
-          </ButtonGroup>
-        </TableCell>
-      </TableRow>
+      <ButtonGroup variant="text" color="default" aria-label="botoẽs de ações">
+        <CustomButton
+          color="success"
+          onClick={() => handleComplete(obj.id, obj.status)}
+        >
+          <DoneIcon />
+        </CustomButton>
+        <CustomButton color="secondary" onClick={() => handleEdit(obj.id)}>
+          <EditIcon />
+        </CustomButton>
+        <CustomButton color="error" onClick={() => handleRemove(obj.id)}>
+          <DeleteIcon />
+        </CustomButton>
+      </ButtonGroup>
     ));
   }
 
@@ -235,8 +195,7 @@ export default function ListAgendamentos({ history }) {
         <Divider style={{ margin: '16px 0px 8px' }} />
         <TableContent
           columns={['Cliente', 'Dentista', 'Data', 'Tipo', 'Status']}
-          hasActions
-          body={renderTableBody()}
+          actions={renderActions()}
           data={agendamentos}
         />
       </TableContainer>

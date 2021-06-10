@@ -26,6 +26,9 @@ import Loading from '../../components/Loading';
 
 // Api back-end
 import api from '../../services/api';
+
+import DateTransformer from '../../utils/dateTransformer';
+
 import { Container, InputContainer, SaveButton } from './styles';
 
 export default function Financeiro({ history, location }) {
@@ -49,7 +52,6 @@ export default function Financeiro({ history, location }) {
       api
         .get(`/financeiro/${id}`)
         .then(({ data }) => {
-          console.log(data);
           setTipo(data.values.tipo);
           setDescricao(data.values.descricao);
           setContato(data.values.contato);
@@ -83,7 +85,7 @@ export default function Financeiro({ history, location }) {
     if (!(data && descricao && tipo && valor && contato)) return;
     try {
       const json = {
-        data: `${data.getFullYear()}-${data.getMonth() + 1}-${data.getDate()}`,
+        data: DateTransformer.toSql(data),
         descricao,
         tipo,
         situacao,

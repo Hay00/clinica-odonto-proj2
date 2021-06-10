@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
@@ -22,10 +20,10 @@ import { AddButton, Container, Heading } from './styles';
 import CustomButton from '../../components/CustomButton';
 import DialogBox from '../../components/DialogBox';
 import Search from '../../components/Search';
+import TableContent from '../../components/TableContent';
 
 // Api
 import api from '../../services/api';
-import TableContent from '../../components/TableContent';
 
 export default function ListMedicamentos({ history }) {
   const [medicamentos, setMedicamentos] = useState([]);
@@ -37,7 +35,7 @@ export default function ListMedicamentos({ history }) {
    */
   useEffect(() => {
     api
-      .get('/medicamentos')
+      .get('/medicamentos', { params: { format: true } })
       .then(({ data }) => {
         if (data.values.length) {
           setMedicamentos(data.values);
@@ -51,18 +49,18 @@ export default function ListMedicamentos({ history }) {
   /**
    * Abre a página para realizar alterações no medicamento
    *
-   * @param {String} id id do medicamento
+   * @param {String} idMedicamento id do medicamento
    */
-  function handleEdit(id) {
-    history.push(`/medicamento/editar/${id}`);
+  function handleEdit(idMedicamento) {
+    history.push(`/medicamento/editar/${idMedicamento}`);
   }
 
   /**
    * Abre uma janela de dialogo para remover um medicamento
-   * @param {String} id id do medicamento
+   * @param {String} idMedicamento id do medicamento
    */
-  function handleRemove(id) {
-    setToRemove(id);
+  function handleRemove(idMedicamento) {
+    setToRemove(idMedicamento);
     setShowDialog(true);
   }
 
@@ -73,9 +71,7 @@ export default function ListMedicamentos({ history }) {
     try {
       const result = await api.delete(`/medicamentos/${toRemove}`);
       if (result) {
-        const rest = medicamentos.filter(
-          ({ idMedicamento }) => idMedicamento !== toRemove
-        );
+        const rest = medicamentos.filter(({ id }) => id !== toRemove);
         setMedicamentos(rest.length ? rest : null);
       }
       setToRemove(null);
@@ -118,7 +114,7 @@ export default function ListMedicamentos({ history }) {
    */
   async function clearSearch() {
     try {
-      const { data } = await api.get('/medicamentos');
+      const { data } = await api.get('/medicamentos', { params: { format: true } });
       if (data.values.length) {
         setMedicamentos(data.values);
       } else {
@@ -132,33 +128,16 @@ export default function ListMedicamentos({ history }) {
   /**
    * Renderiza o body da tabela
    */
-  function renderTableBody() {
+  function renderActions() {
     return medicamentos.map((obj) => (
-      <TableRow key={obj.idMedicamento} hover role="checkbox">
-        <TableCell>{obj.nome}</TableCell>
-        <TableCell>{obj.unidades}</TableCell>
-        <TableCell>R$ {obj.valor}</TableCell>
-        <TableCell>
-          <ButtonGroup
-            variant="text"
-            color="default"
-            aria-label="botoẽs de ações da agenda"
-          >
-            <CustomButton
-              color="secondary"
-              onClick={() => handleEdit(obj.idMedicamento)}
-            >
-              <EditIcon />
-            </CustomButton>
-            <CustomButton
-              color="error"
-              onClick={() => handleRemove(obj.idMedicamento)}
-            >
-              <DeleteIcon />
-            </CustomButton>
-          </ButtonGroup>
-        </TableCell>
-      </TableRow>
+      <ButtonGroup variant="text" color="default" aria-label="botoẽs de ações">
+        <CustomButton color="secondary" onClick={() => handleEdit(obj.id)}>
+          <EditIcon />
+        </CustomButton>
+        <CustomButton color="error" onClick={() => handleRemove(obj.id)}>
+          <DeleteIcon />
+        </CustomButton>
+      </ButtonGroup>
     ));
   }
 
@@ -186,8 +165,7 @@ export default function ListMedicamentos({ history }) {
         <Divider style={{ margin: '16px 0px 8px' }} />
         <TableContent
           columns={['Nome', 'Unidades', 'Valor']}
-          hasActions
-          body={renderTableBody()}
+          actions={renderActions()}
           data={medicamentos}
         />
       </TableContainer>

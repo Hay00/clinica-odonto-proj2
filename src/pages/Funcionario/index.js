@@ -30,11 +30,12 @@ import { ptBR } from 'date-fns/locale';
 import { useParams } from 'react-router';
 
 import Loading from '../../components/Loading';
-// Api back-end
 
+// Api back-end
 import api from '../../services/api';
 
 import cpfUtil from '../../utils/cpfUtils';
+import DateTransformer from '../../utils/dateTransformer';
 
 import { Container, InputContainer, SaveButton } from './styles';
 
@@ -86,9 +87,7 @@ export default function CadastroFuncionario({ history, location }) {
       const json = {
         nome,
         cpf,
-        dataNascimento: `${date.getFullYear()}-${
-          date.getMonth() + 1
-        }-${date.getDate()}`,
+        dataNascimento: DateTransformer.toSql(date),
         senha: senha.value,
         novaSenha: senha.new,
         sexo,
@@ -115,7 +114,7 @@ export default function CadastroFuncionario({ history, location }) {
   function handleCpfChange({ target }) {
     let { value } = target;
 
-    setErrCpf(!cpfUtil.validate(value));
+    setErrCpf(!cpfUtil.validate(value.replace(/(\.|-)/g, '')));
 
     // Formata o CPF
     setCpf(cpfUtil.mask(value));

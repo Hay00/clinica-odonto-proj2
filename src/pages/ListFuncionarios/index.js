@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
@@ -20,13 +18,12 @@ import { Link as RouterLink } from 'react-router-dom';
 import CustomButton from '../../components/CustomButton';
 import DialogBox from '../../components/DialogBox';
 import Search from '../../components/Search';
+import TableContent from '../../components/TableContent';
 
 // Api
 import api from '../../services/api';
 
 import { AddButton, Container, Heading } from './styles';
-import DateTransformer from '../../utils/dateTransformer';
-import TableContent from '../../components/TableContent';
 
 export default function ListFuncionarios({ history }) {
   const [funcionarios, setFuncionarios] = useState([]);
@@ -38,7 +35,7 @@ export default function ListFuncionarios({ history }) {
    */
   useEffect(() => {
     api
-      .get('/funcionarios')
+      .get('/funcionarios', { params: { format: true } })
       .then(({ data }) => {
         if (data.values.length) {
           setFuncionarios(data.values);
@@ -52,18 +49,18 @@ export default function ListFuncionarios({ history }) {
   /**
    * Abre a página para realizar alterações no funcionário
    *
-   * @param {String} id id do funcionário
+   * @param {String} idFuncionario id do funcionário
    */
-  function handleEdit(id) {
-    history.push(`/funcionario/editar/${id}`);
+  function handleEdit(idFuncionario) {
+    history.push(`/funcionario/editar/${idFuncionario}`);
   }
 
   /**
    * Abre uma janela de dialogo para remover um funcionário
-   * @param {String} id id do funcionário
+   * @param {String} idFuncionario id do funcionário
    */
-  function handleRemove(id) {
-    setToRemove(id);
+  function handleRemove(idFuncionario) {
+    setToRemove(idFuncionario);
     setShowDialog(true);
   }
 
@@ -74,9 +71,7 @@ export default function ListFuncionarios({ history }) {
     try {
       const result = await api.delete(`/funcionarios/${toRemove}`);
       if (result) {
-        const rest = funcionarios.filter(
-          ({ idFuncionario }) => idFuncionario !== toRemove
-        );
+        const rest = funcionarios.filter(({ id }) => id !== toRemove);
         setFuncionarios(rest.length ? rest : null);
       }
       setToRemove(null);
@@ -119,7 +114,7 @@ export default function ListFuncionarios({ history }) {
    */
   async function clearSearch() {
     try {
-      const { data } = await api.get('/funcionarios');
+      const { data } = await api.get('/funcionarios', { params: { format: true } });
       if (data.values.length) {
         setFuncionarios(data.values);
       } else {
@@ -133,34 +128,16 @@ export default function ListFuncionarios({ history }) {
   /**
    * Renderiza o body da tabela
    */
-  function renderTableBody() {
+  function renderActions() {
     return funcionarios.map((obj) => (
-      <TableRow key={obj.idFuncionario} hover role="checkbox">
-        <TableCell>{obj.nome}</TableCell>
-        <TableCell>{obj.cpf}</TableCell>
-        <TableCell>{DateTransformer.toBrl(obj.dataNascimento)}</TableCell>
-        <TableCell>{obj.sexo}</TableCell>
-        <TableCell>
-          <ButtonGroup
-            variant="text"
-            color="default"
-            aria-label="botoẽs de ações da agenda"
-          >
-            <CustomButton
-              color="secondary"
-              onClick={() => handleEdit(obj.idFuncionario)}
-            >
-              <EditIcon />
-            </CustomButton>
-            <CustomButton
-              color="error"
-              onClick={() => handleRemove(obj.idFuncionario)}
-            >
-              <DeleteIcon />
-            </CustomButton>
-          </ButtonGroup>
-        </TableCell>
-      </TableRow>
+      <ButtonGroup variant="text" color="default" aria-label="botoẽs de ações">
+        <CustomButton color="secondary" onClick={() => handleEdit(obj.id)}>
+          <EditIcon />
+        </CustomButton>
+        <CustomButton color="error" onClick={() => handleRemove(obj.id)}>
+          <DeleteIcon />
+        </CustomButton>
+      </ButtonGroup>
     ));
   }
 
@@ -188,8 +165,7 @@ export default function ListFuncionarios({ history }) {
         <Divider style={{ margin: '16px 0px 8px' }} />
         <TableContent
           columns={['Nome', 'CPF', 'Data Nascimento', 'Sexo']}
-          hasActions
-          body={renderTableBody()}
+          actions={renderActions()}
           data={funcionarios}
         />
       </TableContainer>

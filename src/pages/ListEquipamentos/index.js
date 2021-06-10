@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
@@ -37,7 +35,7 @@ export default function ListEquipamentos({ history }) {
    */
   useEffect(() => {
     api
-      .get('/equipamentos')
+      .get('/equipamentos', { params: { format: true } })
       .then(({ data }) => {
         if (data.values.length) {
           setEquipamentos(data.values);
@@ -51,18 +49,18 @@ export default function ListEquipamentos({ history }) {
   /**
    * Abre a página para realizar alterações no equipamento
    *
-   * @param {String} id id do equipamento
+   * @param {String} idEquipamento id do equipamento
    */
-  function handleEdit(id) {
-    history.push(`/equipamento/editar/${id}`);
+  function handleEdit(idEquipamento) {
+    history.push(`/equipamento/editar/${idEquipamento}`);
   }
 
   /**
    * Abre uma janela de dialogo para remover um equipamento
-   * @param {String} id id do equipamento
+   * @param {String} idEquipamento id do equipamento
    */
-  function handleRemove(id) {
-    setToRemove(id);
+  function handleRemove(idEquipamento) {
+    setToRemove(idEquipamento);
     setShowDialog(true);
   }
 
@@ -73,9 +71,7 @@ export default function ListEquipamentos({ history }) {
     try {
       const result = await api.delete(`/equipamentos/${toRemove}`);
       if (result) {
-        const rest = equipamentos.filter(
-          ({ idEquipamento }) => idEquipamento !== toRemove
-        );
+        const rest = equipamentos.filter(({ id }) => id !== toRemove);
         setEquipamentos(rest.length ? rest : null);
       }
       setToRemove(null);
@@ -118,7 +114,7 @@ export default function ListEquipamentos({ history }) {
    */
   async function clearSearch() {
     try {
-      const { data } = await api.get('/equipamentos');
+      const { data } = await api.get('/equipamentos', { params: { format: true } });
       if (data.values.length) {
         setEquipamentos(data.values);
       } else {
@@ -132,33 +128,17 @@ export default function ListEquipamentos({ history }) {
   /**
    * Renderiza o body da tabela
    */
-  function renderTableBody() {
+  function renderActions() {
     if (!equipamentos) return null;
     return equipamentos.map((obj) => (
-      <TableRow key={obj.idEquipamento} hover role="checkbox">
-        <TableCell>{obj.nome}</TableCell>
-        <TableCell>{obj.unidades}</TableCell>
-        <TableCell>
-          <ButtonGroup
-            variant="text"
-            color="default"
-            aria-label="botoẽs de ações da agenda"
-          >
-            <CustomButton
-              color="secondary"
-              onClick={() => handleEdit(obj.idEquipamento)}
-            >
-              <EditIcon />
-            </CustomButton>
-            <CustomButton
-              color="error"
-              onClick={() => handleRemove(obj.idEquipamento)}
-            >
-              <DeleteIcon />
-            </CustomButton>
-          </ButtonGroup>
-        </TableCell>
-      </TableRow>
+      <ButtonGroup variant="text" color="default" aria-label="botoẽs de ações">
+        <CustomButton color="secondary" onClick={() => handleEdit(obj.id)}>
+          <EditIcon />
+        </CustomButton>
+        <CustomButton color="error" onClick={() => handleRemove(obj.id)}>
+          <DeleteIcon />
+        </CustomButton>
+      </ButtonGroup>
     ));
   }
 
@@ -186,8 +166,7 @@ export default function ListEquipamentos({ history }) {
         <Divider style={{ margin: '16px 0px 8px' }} />
         <TableContent
           columns={['Nome', 'Unidades']}
-          hasActions
-          body={renderTableBody()}
+          actions={renderActions()}
           data={equipamentos}
         />
       </TableContainer>

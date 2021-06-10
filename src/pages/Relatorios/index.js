@@ -1,70 +1,69 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useState } from 'react';
 
 import DateFnsUtils from '@date-io/date-fns';
+
 // Material UI
+import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
-import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
+import InputLabel from '@material-ui/core/InputLabel';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
+import TableContainer from '@material-ui/core/TableContainer';
+import Typography from '@material-ui/core/Typography';
 import {
   KeyboardDatePicker,
-  KeyboardTimePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 
 import { ptBR } from 'date-fns/locale';
 
-import { useParams } from 'react-router';
-
+// Componentes
 import Loading from '../../components/Loading';
+import TableContent from '../../components/TableContent';
 
+// Api
 import api from '../../services/api';
 
-import { Container, InputContainer, SaveButton } from './styles';
+import DateTransformer from '../../utils/dateTransformer';
+
+import { Container } from './styles';
 
 export default function Relatorios({ history, location }) {
-  const { id } = useParams();
-  const isEdit = location.pathname.includes('/relatorios/editar/');
+  const [loading, setLoading] = useState(false);
 
-  const [loading, setLoading] = useState(isEdit);
+  const [selected, setSelected] = useState('agendamentos');
+  const [type, setType] = useState('agendamentos');
 
-  const [tipo, setTipo] = useState('extrato financeiro');
+  const [tableData, setTableData] = useState(null);
+
   const [dataIn, setDataIn] = useState(new Date());
   const [dataOut, setDataOut] = useState(new Date());
-  /**
-   * Busca os dados do medicamento a ser alterado
-   */
 
+  const hasDate = selected === 'agendamentos' || selected === 'financeiro';
 
-  /**
-   * Salva o novo agendamento usando a API
-   */
-  async function onSave() {
-    if (!(dataIn && dataOut && tipo)) return;
+  async function onSearch() {
+    setLoading(true);
+    setType(selected);
     try {
-      const json = {
-        tipo,
-        dataIn,
-        dataOut
-      };
-
-      let result = false;
-      if (isEdit) {
-        result = await api.put(`/relatorio/${id}`, json);
+      let json = { params: '' };
+      if (hasDate) {
+        json.params = {
+          dataInicio: DateTransformer.toSql(dataIn),
+          dataFinal: DateTransformer.toSql(dataOut),
+        };
+      }
+      const { data } = await api.get(`/relatorios/${selected}`, json);
+      if (data.values.length) {
+        setTableData(data.values);
       } else {
-        result = await api.post('/relatorio', json);
+        setTableData(null);
       }
-      if (result) {
-        history.push('/relatorio');
-      }
-    } catch (error) {
-      console.log(error.message);
+    } catch (e) {
+      console.log(e.message);
+      setTableData(null);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -76,6 +75,13 @@ export default function Relatorios({ history, location }) {
     );
   }
 
+  const tableColumns = {
+    agendamentos: ['Cliente', 'Dentista', 'Data', 'Tipo', 'Status'],
+    financeiro: ['Contato', 'Data', 'Tipo', 'Descrição', 'Situação', 'Valor'],
+    equipamentos: ['Nome', 'Unidades'],
+    medicamentos: ['Nome', 'Unidades', 'Valor'],
+  };
+
   return (
     <Container>
       <div>
@@ -84,66 +90,75 @@ export default function Relatorios({ history, location }) {
         </Typography>
       </div>
       <Divider style={{ margin: 8 }} />
-      <div>
+
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <FormControl variant="outlined" style={{ margin: 8, minWidth: 280 }}>
           <InputLabel id="select-situacao-label">Tipo</InputLabel>
           <Select
             labelId="select-tipo-label"
             id="select-tipo"
-            value={tipo}
-            onChange={({ target }) => setTipo(target.value)}
+            value={selected}
+            onChange={({ target }) => setSelected(target.value)}
             label="tipo"
           >
-            <MenuItem value={'extrato financeiro'}>Extrato Financeiro</MenuItem>
-            <MenuItem value={'estoque'}>Estoque</MenuItem>
-            <MenuItem value={'vendas'}>Vendas</MenuItem>
-            <MenuItem value={'laudos'}>Laudos</MenuItem>
-            <MenuItem value={'receita'}>Receita</MenuItem>
-            <MenuItem value={'compras pendentes'}>Compras Pendentes</MenuItem>
-            <MenuItem value={'clientes atendidos'}>Clientes Atendidos</MenuItem>
-
+            <MenuItem value={'agendamentos'}>Clientes Atendidos</MenuItem>
+            <MenuItem value={'financeiro'}>Extrato Financeiro</MenuItem>
+            <MenuItem value={'equipamentos'}>Estoque Equipamentos</MenuItem>
+            <MenuItem value={'medicamentos'}>Estoque Medicamentos</MenuItem>
           </Select>
         </FormControl>
 
-
-
-
-      <MuiPickersUtilsProvider utils={DateFnsUtils} locale={ptBR}>
-          <KeyboardDatePicker
-            style={{ margin: 8, width: 165 }}
-            id={'dateIn'}
-            name={'dateIn'}
-            autoOk
-            variant={'inline'}
-            inputVariant={'outlined'}
-            label={'Data Inicial'}
-            format={'dd/MM/yyyy'}
-            value={dataIn}
-            onChange={setDataIn}
-          />
-        </MuiPickersUtilsProvider>
-
-        <MuiPickersUtilsProvider utils={DateFnsUtils} locale={ptBR}>
-          <KeyboardDatePicker
-            style={{ margin: 8, width: 165 }}
-            id={'dateIn'}
-            name={'dateIn'}
-            autoOk
-            variant={'inline'}
-            inputVariant={'outlined'}
-            label={'Data Final'}
-            format={'dd/MM/yyyy'}
-            value={dataOut}
-            onChange={setDataOut}
-          />
-    
-        </MuiPickersUtilsProvider>
-
-    
-    <div style={{ margin: 2}}>
-        <SaveButton onClick={onSave}>Buscar</SaveButton>
-       </div>
-       </div>
+        {hasDate && (
+          <>
+            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={ptBR}>
+              <KeyboardDatePicker
+                style={{ margin: 8, width: 185 }}
+                id={'dateIn'}
+                name={'dateIn'}
+                autoOk
+                variant={'inline'}
+                inputVariant={'outlined'}
+                label={'Data Inicial'}
+                format={'dd/MM/yyyy'}
+                value={dataIn}
+                onChange={setDataIn}
+              />
+            </MuiPickersUtilsProvider>
+            <MuiPickersUtilsProvider utils={DateFnsUtils} locale={ptBR}>
+              <KeyboardDatePicker
+                style={{ margin: 8, width: 185 }}
+                id={'dateIn'}
+                name={'dateIn'}
+                autoOk
+                variant={'inline'}
+                inputVariant={'outlined'}
+                label={'Data Final'}
+                format={'dd/MM/yyyy'}
+                value={dataOut}
+                onChange={setDataOut}
+              />
+            </MuiPickersUtilsProvider>
+          </>
+        )}
+        <div style={{ marginLeft: 8 }}>
+          <Button variant="contained" color="secondary" onClick={onSearch}>
+            Buscar
+          </Button>
+        </div>
+      </div>
+      <Divider style={{ margin: 8 }} />
+      <div style={{ margin: '8px' }}>
+        <TableContainer>
+          <Typography style={{ margin: 8 }} color="primary" variant="h6">
+            Resultado
+          </Typography>
+          {loading ? (
+            <Loading />
+          ) : (
+            <TableContent columns={tableColumns[type]} data={tableData} />
+          )}
+        </TableContainer>
+      </div>
     </Container>
   );
 }

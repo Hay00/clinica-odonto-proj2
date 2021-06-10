@@ -9,7 +9,8 @@ export const Container = styled.footer`
   line-height: 80px;
   align-items: center;
   padding: 0px 20px;
-  box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 2px 4px -1px rgb(0 0 0 / 20%),
+    0px 0px 5px 0px rgb(0 0 0 / 14%), 0px 1px 10px 0px rgb(0 0 0 / 12%);
 `;
 
 export const Text = styled.p`

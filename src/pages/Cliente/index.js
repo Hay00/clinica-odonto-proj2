@@ -10,7 +10,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import { TextareaAutosize } from '@material-ui/core';
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
@@ -26,7 +25,9 @@ import Loading from '../../components/Loading';
 import api from '../../services/api';
 
 import { Container, InputContainer, SaveButton } from './styles';
+
 import cpfUtil from '../../utils/cpfUtils';
+import DateTransformer from '../../utils/dateTransformer';
 
 export default function CadastroCliente({ history, location }) {
   const { id } = useParams();
@@ -40,6 +41,7 @@ export default function CadastroCliente({ history, location }) {
   const [date, setDate] = useState(new Date());
   const [sexo, setSexo] = useState('Feminino');
   const [errCpf, setErrCpf] = useState(false);
+  const [anamnese, setAnamnese] = useState('');
 
   /**
    * Busca os dados do cliente a ser alterado
@@ -68,9 +70,7 @@ export default function CadastroCliente({ history, location }) {
       const json = {
         nome,
         cpf,
-        dataNascimento: `${date.getFullYear()}-${
-          date.getMonth() + 1
-        }-${date.getDate()}`,
+        dataNascimento: DateTransformer.toSql(date),
         sexo,
       };
 
@@ -96,7 +96,7 @@ export default function CadastroCliente({ history, location }) {
   function handleCpfChange({ target }) {
     let { value } = target;
 
-    setErrCpf(!cpfUtil.validate(value));
+    setErrCpf(!cpfUtil.validate(value.replace(/(\.|-)/g, '')));
 
     // Formata o CPF
     setCpf(cpfUtil.mask(value));
@@ -171,16 +171,17 @@ export default function CadastroCliente({ history, location }) {
         </FormControl>
       </div>
 
-      <div>
-        <TextareaAutosize
-            style={{ margin: 10, minWidth: 200 }}
-            fullWidth
-            rowsMax={3}
-            aria-label="maximum height"
-            placeholder="Insira aqui a Anamnese"   
+      <div style={{ margin: 8 }}>
+        <TextField
+          label="Anamnese do Cliente"
+          placeholder="Insira aqui a Anamnese"
+          variant="outlined"
+          multiline
+          fullWidth
+          value={anamnese}
+          onChange={({ target }) => setAnamnese(target.value)}
         />
       </div>
-
       <div style={{ margin: 8 }}>
         <SaveButton onClick={onSave}>Salvar</SaveButton>
       </div>

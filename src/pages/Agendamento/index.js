@@ -21,8 +21,12 @@ import { Container, SaveButton } from './styles';
 
 // Api back-end
 import api from '../../services/api';
+
 import { useParams } from 'react-router';
+
 import Loading from '../../components/Loading';
+
+import DateTransformer from '../../utils/dateTransformer';
 
 export default function CadastroAgendamento({ history, location }) {
   const { id } = useParams();
@@ -101,7 +105,7 @@ export default function CadastroAgendamento({ history, location }) {
         idCliente: selectCliente,
         idFuncionario: selectDentista,
         idTipo: selectType,
-        data: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+        data: DateTransformer.toSql(date),
         hora: `${hour.getHours()}:${timeMinutes}`,
         concluida: false,
       };

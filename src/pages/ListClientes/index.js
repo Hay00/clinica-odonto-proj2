@@ -4,9 +4,7 @@ import React, { useEffect, useState } from 'react';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
 import Divider from '@material-ui/core/Divider';
 import Paper from '@material-ui/core/Paper';
-import TableCell from '@material-ui/core/TableCell';
 import TableContainer from '@material-ui/core/TableContainer';
-import TableRow from '@material-ui/core/TableRow';
 import Typography from '@material-ui/core/Typography';
 
 // Icons
@@ -25,7 +23,7 @@ import Search from '../../components/Search';
 import api from '../../services/api';
 
 import { AddButton, Container, Heading } from './styles';
-import DateTransformer from '../../utils/dateTransformer';
+
 import TableContent from '../../components/TableContent';
 
 export default function ListClientes({ history }) {
@@ -38,7 +36,7 @@ export default function ListClientes({ history }) {
    */
   useEffect(() => {
     api
-      .get('/clientes')
+      .get('/clientes', { params: { format: true } })
       .then(({ data }) => {
         if (data.values.length) {
           setClientes(data.values);
@@ -74,7 +72,7 @@ export default function ListClientes({ history }) {
     try {
       const result = await api.delete(`/clientes/${toRemove}`);
       if (result) {
-        const rest = clientes.filter(({ idCliente }) => idCliente !== toRemove);
+        const rest = clientes.filter(({ id }) => id !== toRemove);
         setClientes(rest.length ? rest : null);
       }
       setToRemove(null);
@@ -117,7 +115,7 @@ export default function ListClientes({ history }) {
    */
   async function clearSearch() {
     try {
-      const { data } = await api.get('/clientes');
+      const { data } = await api.get('/clientes', { params: { format: true } });
       if (data.values.length) {
         setClientes(data.values);
       } else {
@@ -131,35 +129,17 @@ export default function ListClientes({ history }) {
   /**
    * Renderiza o body da tabela
    */
-  function renderTableBody() {
+  function renderActions() {
     if (!clientes) return null;
     return clientes.map((obj) => (
-      <TableRow key={obj.idCliente} hover role="checkbox">
-        <TableCell>{obj.nome}</TableCell>
-        <TableCell>{obj.cpf}</TableCell>
-        <TableCell>{DateTransformer.toBrl(obj.dataNascimento)}</TableCell>
-        <TableCell>{obj.sexo}</TableCell>
-        <TableCell>
-          <ButtonGroup
-            variant="text"
-            color="default"
-            aria-label="botoẽs de ações da agenda"
-          >
-            <CustomButton
-              color="secondary"
-              onClick={() => handleEdit(obj.idCliente)}
-            >
-              <EditIcon />
-            </CustomButton>
-            <CustomButton
-              color="error"
-              onClick={() => handleRemove(obj.idCliente)}
-            >
-              <DeleteIcon />
-            </CustomButton>
-          </ButtonGroup>
-        </TableCell>
-      </TableRow>
+      <ButtonGroup variant="text" color="default" aria-label="botoẽs de ações">
+        <CustomButton color="secondary" onClick={() => handleEdit(obj.id)}>
+          <EditIcon />
+        </CustomButton>
+        <CustomButton color="error" onClick={() => handleRemove(obj.id)}>
+          <DeleteIcon />
+        </CustomButton>
+      </ButtonGroup>
     ));
   }
 
@@ -187,8 +167,7 @@ export default function ListClientes({ history }) {
         <Divider style={{ margin: '16px 0px 8px' }} />
         <TableContent
           columns={['Nome', 'CPF', 'Data', 'Sexo']}
-          hasActions
-          body={renderTableBody()}
+          actions={renderActions()}
           data={clientes}
         />
       </TableContainer>
