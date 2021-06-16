@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const Container = styled.footer`
   display: flex;
+  z-index: 1201;
   flex-direction: row;
   justify-content: space-between;
   background: #fff;
