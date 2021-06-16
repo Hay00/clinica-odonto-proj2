@@ -55,6 +55,7 @@ export default function CadastroCliente({ history, location }) {
           setCpf(data.values.cpf);
           setDate(new Date(data.values.dataNascimento));
           setSexo(data.values.sexo);
+          setAnamnese(data.values.anamnese);
           setLoading(false);
         })
         .catch(({ message }) => console.log(message));
@@ -72,6 +73,7 @@ export default function CadastroCliente({ history, location }) {
         cpf,
         dataNascimento: DateTransformer.toSql(date),
         sexo,
+        anamnese,
       };
 
       let result = false;

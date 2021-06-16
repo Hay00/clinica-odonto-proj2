@@ -66,9 +66,7 @@ export default function Header({ toggleDrawer }) {
         >
           <MenuIcon />
         </IconButton>
-        <IconButton color="inherit">
-          <Logo size={26} />
-        </IconButton>
+        <Logo size={26} />
         <Typography variant="h6" noWrap>
           Clinica Odonto
         </Typography>
